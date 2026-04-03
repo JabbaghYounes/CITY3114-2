@@ -40,7 +40,7 @@ double f1_score(const ConfusionMatrix& cm) {
 }
 
 double k_fold_cv(const Dataset& dataset, const Kernel& kernel,
-                 double C, int k, unsigned int seed) {
+                 double C, int k, unsigned int seed, bool verbose) {
     int n = static_cast<int>(dataset.X.size());
 
     // Shuffle indices
@@ -79,14 +79,63 @@ double k_fold_cv(const Dataset& dataset, const Kernel& kernel,
         std::vector<int> predictions = svm.predict(test_X);
         double fold_acc = accuracy(predictions, test_y);
 
-        std::cout << "  Fold " << (fold + 1) << "/" << k
-                  << ": accuracy = " << std::fixed << std::setprecision(4)
-                  << fold_acc << std::endl;
+        if (verbose) {
+            std::cout << "  Fold " << (fold + 1) << "/" << k
+                      << ": accuracy = " << std::fixed << std::setprecision(4)
+                      << fold_acc << std::endl;
+        }
 
         total_accuracy += fold_acc;
     }
 
     return total_accuracy / k;
+}
+
+GridSearchResult grid_search(const Dataset& dataset, KernelType type,
+                             const std::vector<double>& C_values,
+                             const std::vector<double>& gamma_values,
+                             const std::vector<int>& degree_values,
+                             int k, unsigned int seed) {
+    GridSearchResult best{0, 0, 0, 0.0};
+
+    std::vector<int> degrees = degree_values;
+    if (type != KernelType::POLYNOMIAL) {
+        degrees = {3}; // degree is irrelevant for Linear/RBF
+    }
+
+    for (double C : C_values) {
+        for (double gamma : gamma_values) {
+            for (int degree : degrees) {
+                Kernel kernel(type, gamma, 1.0, degree);
+                double cv_acc = k_fold_cv(dataset, kernel, C, k, seed, false);
+
+                std::cout << "  C=" << std::setw(6) << C
+                          << ", gamma=" << std::setw(6) << gamma;
+                if (type == KernelType::POLYNOMIAL) {
+                    std::cout << ", degree=" << degree;
+                }
+                std::cout << "  -> CV accuracy: " << std::fixed
+                          << std::setprecision(4) << cv_acc << std::endl;
+
+                if (cv_acc > best.best_cv_accuracy) {
+                    best.best_C = C;
+                    best.best_gamma = gamma;
+                    best.best_degree = degree;
+                    best.best_cv_accuracy = cv_acc;
+                }
+            }
+        }
+    }
+
+    std::cout << "\n  Best: C=" << best.best_C
+              << ", gamma=" << best.best_gamma;
+    if (type == KernelType::POLYNOMIAL) {
+        std::cout << ", degree=" << best.best_degree;
+    }
+    std::cout << " -> CV accuracy: " << std::fixed << std::setprecision(4)
+              << best.best_cv_accuracy << std::endl;
+
+    return best;
 }
 
 void print_results(const std::vector<int>& predicted, const std::vector<int>& actual) {

@@ -50,8 +50,8 @@ int main() {
     std::cout << "Mean CV Accuracy: " << std::fixed << std::setprecision(4)
               << cv_acc << std::endl;
 
-    // 6. Compare all 3 kernels
-    std::cout << "\n=== Kernel Comparison ===" << std::endl;
+    // 6. Compare all 3 kernels with default params
+    std::cout << "\n=== Kernel Comparison (Default Params) ===" << std::endl;
 
     struct KernelConfig {
         std::string name;
@@ -72,6 +72,37 @@ int main() {
         svm.train(train.X, train.y);
 
         std::vector<int> preds = svm.predict(test.X);
+        print_results(preds, test.y);
+    }
+
+    // 7. Hyperparameter optimisation via grid search
+    std::vector<double> C_values = {0.1, 1, 10, 100};
+    std::vector<double> gamma_values = {0.001, 0.01, 0.1, 1};
+    std::vector<int> degree_values = {2, 3, 4};
+
+    struct {
+        std::string name;
+        KernelType type;
+    } kernel_types[] = {
+        {"Linear",     KernelType::LINEAR},
+        {"RBF",        KernelType::RBF},
+        {"Polynomial", KernelType::POLYNOMIAL},
+    };
+
+    for (auto& kt : kernel_types) {
+        std::cout << "\n=== Grid Search (" << kt.name << ") ===" << std::endl;
+
+        GridSearchResult result = grid_search(dataset, kt.type,
+                                              C_values, gamma_values,
+                                              degree_values, 5, 42);
+
+        // Retrain on full training set with best params
+        std::cout << "\n--- " << kt.name << " (Optimised) ---" << std::endl;
+        Kernel best_kernel(kt.type, result.best_gamma, 1.0, result.best_degree);
+        SVM best_svm(best_kernel, result.best_C);
+        best_svm.train(train.X, train.y);
+
+        std::vector<int> preds = best_svm.predict(test.X);
         print_results(preds, test.y);
     }
 

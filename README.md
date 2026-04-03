@@ -1,8 +1,6 @@
-# SVM Classifier — Breast Cancer Wisconsin
+# SVM Classifier
 
-CITY3114 Machine Learning and Algorithms — Assignment 2
-
-A Support Vector Machine (SVM) classifier built from scratch in C++ using the SMO (Sequential Minimal Optimization) algorithm. No external libraries — all components implemented manually.
+A Support Vector Machine (SVM) classifier built from scratch in C++ using the SMO (Sequential Minimal Optimization) algorithm. No external libraries and all components implemented manually.
 
 ## Features
 

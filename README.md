@@ -31,13 +31,16 @@ cmake --build build
 ./build/svm_classifier
 ```
 
-## Project Structure
+## Documentation
 
-```
-src/
-  main.cpp           — Entry point
-  data_loader.hpp/cpp — CSV parsing, normalisation, train/test split
-  kernel.hpp/cpp      — Linear, RBF, Polynomial kernels
-  svm.hpp/cpp         — SVM class with SMO solver
-  evaluation.hpp/cpp  — Metrics and k-fold cross-validation
-```
+See the [`docs/`](docs/) folder for detailed documentation:
+
+- [Architecture](docs/architecture.md) — project structure and module responsibilities
+- [Algorithm](docs/algorithm.md) — SVM dual formulation, SMO training, kernel functions
+- [Usage](docs/usage.md) — build, run, and output walk-through
+
+The full assignment report is in [`resources/assignment-report.md`](resources/assignment-report.md).
+
+## License
+
+[MIT](LICENSE)

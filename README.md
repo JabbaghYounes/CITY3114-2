@@ -28,7 +28,7 @@ Requires CMake and a C++17 compiler.
 ```bash
 cmake -B build
 cmake --build build
-./build/svm_classifier | tee run_output.txt
+./build/svm_classifier | tee resources/run_output.txt
 ```
 
 ### Generate Figures
@@ -39,7 +39,7 @@ After running the classifier, generate publication-quality plots from the output
 python3 scripts/plot_results.py
 ```
 
-This reads `run_output.txt` and saves six PNG figures to `figures/` (confusion matrices, CV folds, kernel comparisons, grid search heatmaps, default vs optimised accuracy). Requires Python 3 with `matplotlib` and `numpy`.
+This reads `resources/run_output.txt` and saves six PNG figures to `figures/` (confusion matrices, CV folds, kernel comparisons, grid search heatmaps, default vs optimised accuracy). Requires Python 3 with `matplotlib` and `numpy`.
 
 ## Documentation
 

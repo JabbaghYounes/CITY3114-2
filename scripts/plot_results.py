@@ -13,7 +13,7 @@ from matplotlib.patches import Rectangle
 # --- Constants ---
 PROJECT_ROOT = Path(__file__).parent.parent
 OUTPUT_DIR = PROJECT_ROOT / "figures"
-DEFAULT_INPUT = PROJECT_ROOT / "run_output.txt"
+DEFAULT_INPUT = PROJECT_ROOT / "resources" / "run_output.txt"
 DPI = 300
 
 # Colorblind-friendly palette

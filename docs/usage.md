@@ -68,7 +68,7 @@ The binary takes no command-line flags. A single run performs the full pipeline:
 Total runtime is a few seconds on a typical desktop CPU. Every step writes to stdout — use `tee` to both see the output and save it for the plotting script:
 
 ```bash
-./build/svm_classifier | tee run_output.txt
+./build/svm_classifier | tee resources/run_output.txt
 ```
 
 ## Generate Figures

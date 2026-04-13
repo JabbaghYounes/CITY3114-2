@@ -9,7 +9,6 @@ This document describes the repository layout and how the modules fit together. 
 ├── CMakeLists.txt          # CMake build configuration
 ├── README.md               # Project overview
 ├── LICENSE                 # MIT license
-├── run_output.txt          # Captured stdout from a classifier run
 ├── scripts/                # Utility scripts
 │   └── plot_results.py     # Generates figures from run output
 ├── src/                    # C++ source
@@ -24,7 +23,9 @@ This document describes the repository layout and how the modules fit together. 
 │   └── usage.md            # Build, run, and output walk-through
 ├── resources/              # Assignment deliverables
 │   ├── assignment-report.md    # Full report for Task 1 and Task 2
-│   └── assignment-report.docx  # DOCX export of the report
+│   ├── assignment-report.docx  # DOCX export of the report
+│   ├── run_output.txt          # Captured stdout from a classifier run
+│   └── svm_classifier.cast     # Terminal recording of a classifier run
 ├── figures/                # Generated plots (gitignored — run plot_results.py)
 ├── data/                   # Dataset (gitignored — download separately)
 └── build/                  # CMake build output (gitignored)
@@ -112,7 +113,7 @@ The deliberate choice to hard-code the pipeline (instead of exposing CLI flags) 
 
 A standalone Python script that parses the classifier's stdout and generates six publication-quality PNG figures. It uses regex-based line-by-line parsing with a state machine to extract metrics, confusion matrices, CV fold results, and grid search data from the text output. No modifications to the C++ code are needed — the script works entirely as a post-processing step.
 
-Dependencies are `matplotlib` and `numpy` only. The script supports three input modes: reading `run_output.txt` (default), an explicit `--input PATH`, or `--stdin` for piping directly from the classifier. Figures are saved to `figures/` at 300 DPI.
+Dependencies are `matplotlib` and `numpy` only. The script supports three input modes: reading `resources/run_output.txt` (default), an explicit `--input PATH`, or `--stdin` for piping directly from the classifier. Figures are saved to `figures/` at 300 DPI.
 
 ## Build System
 

@@ -44,7 +44,7 @@ mkdir -p data
 curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data" -o data/wdbc.csv
 ```
 
-A complete run takes a few seconds on a typical desktop CPU and prints the baseline results, the cross-validation accuracy, the per-kernel comparison, the full grid-search trace, and the final results table for the optimised models. A companion Python script (`plot_results.py`) parses the program's stdout and generates publication-quality figures — confusion matrix heatmaps, kernel comparison bar charts, grid search heatmaps, and a cross-validation fold chart — into a `figures/` directory.
+A complete run takes a few seconds on a typical desktop CPU and prints the baseline results, the cross-validation accuracy, the per-kernel comparison, the full grid-search trace, and the final results table for the optimised models. A companion Python script (`scripts/plot_results.py`) parses the program's stdout and generates publication-quality figures — confusion matrix heatmaps, kernel comparison bar charts, grid search heatmaps, and a cross-validation fold chart — into a `figures/` directory.
 
 ### 1.2 Dataset
 

@@ -11,9 +11,9 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
 # --- Constants ---
-SCRIPT_DIR = Path(__file__).parent
-OUTPUT_DIR = SCRIPT_DIR / "figures"
-DEFAULT_INPUT = SCRIPT_DIR / "run_output.txt"
+PROJECT_ROOT = Path(__file__).parent.parent
+OUTPUT_DIR = PROJECT_ROOT / "figures"
+DEFAULT_INPUT = PROJECT_ROOT / "run_output.txt"
 DPI = 300
 
 # Colorblind-friendly palette

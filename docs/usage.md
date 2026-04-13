@@ -73,10 +73,10 @@ Total runtime is a few seconds on a typical desktop CPU. Every step writes to st
 
 ## Generate Figures
 
-A Python script (`plot_results.py` at the project root) parses the captured output and generates six publication-quality PNG figures:
+A Python script (`scripts/plot_results.py`) parses the captured output and generates six publication-quality PNG figures:
 
 ```bash
-python3 plot_results.py
+python3 scripts/plot_results.py
 ```
 
 This requires Python 3 with `matplotlib` and `numpy`. Figures are saved to `figures/` at 300 DPI:
@@ -93,13 +93,13 @@ This requires Python 3 with `matplotlib` and `numpy`. Figures are saved to `figu
 The script also supports piping directly from the classifier:
 
 ```bash
-./build/svm_classifier | python3 plot_results.py --stdin
+./build/svm_classifier | python3 scripts/plot_results.py --stdin
 ```
 
 Or an explicit input file:
 
 ```bash
-python3 plot_results.py --input path/to/output.txt
+python3 scripts/plot_results.py --input path/to/output.txt
 ```
 
 ## Expected Output (Abbreviated)

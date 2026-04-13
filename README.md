@@ -36,7 +36,7 @@ cmake --build build
 After running the classifier, generate publication-quality plots from the output:
 
 ```bash
-python3 plot_results.py
+python3 scripts/plot_results.py
 ```
 
 This reads `run_output.txt` and saves six PNG figures to `figures/` (confusion matrices, CV folds, kernel comparisons, grid search heatmaps, default vs optimised accuracy). Requires Python 3 with `matplotlib` and `numpy`.

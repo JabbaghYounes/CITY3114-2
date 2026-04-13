@@ -9,8 +9,9 @@ This document describes the repository layout and how the modules fit together. 
 ├── CMakeLists.txt          # CMake build configuration
 ├── README.md               # Project overview
 ├── LICENSE                 # MIT license
-├── plot_results.py         # Python script — generates figures from run output
 ├── run_output.txt          # Captured stdout from a classifier run
+├── scripts/                # Utility scripts
+│   └── plot_results.py     # Generates figures from run output
 ├── src/                    # C++ source
 │   ├── main.cpp            # Pipeline entry point
 │   ├── data_loader.hpp/cpp # CSV parsing, normalisation, train/test split
@@ -107,7 +108,7 @@ A fixed, linear pipeline that ties everything together. There are no command-lin
 
 The deliberate choice to hard-code the pipeline (instead of exposing CLI flags) keeps the demonstration self-contained: a single `./build/svm_classifier` invocation reproduces every result in the assignment report.
 
-### `plot_results.py` (project root)
+### `scripts/plot_results.py`
 
 A standalone Python script that parses the classifier's stdout and generates six publication-quality PNG figures. It uses regex-based line-by-line parsing with a state machine to extract metrics, confusion matrices, CV fold results, and grid search data from the text output. No modifications to the C++ code are needed — the script works entirely as a post-processing step.
 

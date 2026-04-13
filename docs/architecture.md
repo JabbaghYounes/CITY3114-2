@@ -9,6 +9,8 @@ This document describes the repository layout and how the modules fit together. 
 ├── CMakeLists.txt          # CMake build configuration
 ├── README.md               # Project overview
 ├── LICENSE                 # MIT license
+├── plot_results.py         # Python script — generates figures from run output
+├── run_output.txt          # Captured stdout from a classifier run
 ├── src/                    # C++ source
 │   ├── main.cpp            # Pipeline entry point
 │   ├── data_loader.hpp/cpp # CSV parsing, normalisation, train/test split
@@ -21,8 +23,8 @@ This document describes the repository layout and how the modules fit together. 
 │   └── usage.md            # Build, run, and output walk-through
 ├── resources/              # Assignment deliverables
 │   ├── assignment-report.md    # Full report for Task 1 and Task 2
-│   ├── assignment-report.docx  # DOCX export of the report
-│   └── references.md           # References grouped by report section
+│   └── assignment-report.docx  # DOCX export of the report
+├── figures/                # Generated plots (gitignored — run plot_results.py)
 ├── data/                   # Dataset (gitignored — download separately)
 └── build/                  # CMake build output (gitignored)
 ```
@@ -103,7 +105,13 @@ A fixed, linear pipeline that ties everything together. There are no command-lin
 8. Run grid search over `C ∈ {0.1, 1, 10, 100}`, `γ ∈ {0.001, 0.01, 0.1, 1}`, `degree ∈ {2, 3, 4}` for each of the three kernels.
 9. Retrain each kernel on the 80/20 split using its grid-search winner and print the final evaluation.
 
-The deliberate choice to hard-code the pipeline (instead of exposing CLI flags) keeps the demonstration self-contained: a single `./build/svm_classifier` invocation reproduces every figure in the assignment report.
+The deliberate choice to hard-code the pipeline (instead of exposing CLI flags) keeps the demonstration self-contained: a single `./build/svm_classifier` invocation reproduces every result in the assignment report.
+
+### `plot_results.py` (project root)
+
+A standalone Python script that parses the classifier's stdout and generates six publication-quality PNG figures. It uses regex-based line-by-line parsing with a state machine to extract metrics, confusion matrices, CV fold results, and grid search data from the text output. No modifications to the C++ code are needed — the script works entirely as a post-processing step.
+
+Dependencies are `matplotlib` and `numpy` only. The script supports three input modes: reading `run_output.txt` (default), an explicit `--input PATH`, or `--stdin` for piping directly from the classifier. Figures are saved to `figures/` at 300 DPI.
 
 ## Build System
 

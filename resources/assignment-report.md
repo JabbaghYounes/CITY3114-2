@@ -44,7 +44,7 @@ mkdir -p data
 curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data" -o data/wdbc.csv
 ```
 
-A complete run takes a few seconds on a typical desktop CPU and prints the baseline results, the cross-validation accuracy, the per-kernel comparison, the full grid-search trace, and the final results table for the optimised models.
+A complete run takes a few seconds on a typical desktop CPU and prints the baseline results, the cross-validation accuracy, the per-kernel comparison, the full grid-search trace, and the final results table for the optimised models. A companion Python script (`plot_results.py`) parses the program's stdout and generates publication-quality figures — confusion matrix heatmaps, kernel comparison bar charts, grid search heatmaps, and a cross-validation fold chart — into a `figures/` directory.
 
 ### 1.2 Dataset
 
@@ -218,7 +218,7 @@ To establish a baseline before any tuning, each kernel was trained with the defa
 
 #### Why Cross-Validation
 
-Selecting hyperparameters by their performance on a single train/test split would be unreliable: a particular split might happen to favour one combination over another simply due to which 113 samples ended up in the test set. **k-fold cross-validation** addresses this by partitioning the (full, normalised) dataset into `k` equally sized folds, training on `k − 1` of them, evaluating on the held-out fold, and rotating through all `k` choices of held-out fold. The reported metric is the mean accuracy across the `k` runs. Five folds was chosen as a standard compromise: it gives reasonably stable estimates without making the grid search unaffordably slow.
+Selecting hyperparameters by their performance on a single train/test split would be unreliable: a particular split might happen to favour one combination over another simply due to which 113 samples ended up in the test set. **k-fold cross-validation** addresses this by partitioning the (full, normalised) dataset into `k` equally sized folds, training on `k − 1` of them, evaluating on the held-out fold, and rotating through all `k` choices of held-out fold. The reported metric is the mean accuracy across the `k` runs. Five folds was chosen as a standard compromise: it gives reasonably stable estimates without making the grid search unaffordably slow. The per-fold accuracy spread is visualised in `figures/cv_folds.png`.
 
 It is worth noting that the cross-validation here uses **the full dataset, not just the training split**. This is the conventional approach for hyperparameter selection — the test split is only used at the very end, to give an unbiased estimate of generalisation for the final tuned model.
 
@@ -242,7 +242,7 @@ The grid search identified the following best configurations by 5-fold CV accura
 
 The CV accuracies for the optimised hyperparameters look modest in this table (especially for Linear), but they reflect the **average across five different train/test splits**, and they are evaluated *before* the final retraining on the held-out 80/20 split. The held-out test results in §1.5 are noticeably better, particularly for the Linear kernel — a reminder that a single split can be optimistic relative to cross-validation.
 
-A practical observation from the grid search trace is that the best combinations all involve **small** values of `C` and `γ`. This is consistent with the data being approximately linearly separable after normalisation: a small `C` allows a wide margin (good generalisation), and a small `γ` makes the RBF kernel behave more linearly (in the limit `γ → 0`, the RBF kernel approaches a constant). The grid search is therefore not just a brute-force optimiser — its results carry diagnostic information about the structure of the dataset.
+The grid search landscape is visualised as C-vs-gamma heatmaps in `figures/grid_search_heatmaps.png`, with the best cell highlighted for each kernel. A practical observation from the grid search trace is that the best combinations all involve **small** values of `C` and `γ`. This is consistent with the data being approximately linearly separable after normalisation: a small `C` allows a wide margin (good generalisation), and a small `γ` makes the RBF kernel behave more linearly (in the limit `γ → 0`, the RBF kernel approaches a constant). The grid search is therefore not just a brute-force optimiser — its results carry diagnostic information about the structure of the dataset.
 
 ### 1.5 Results
 
@@ -254,7 +254,7 @@ A practical observation from the grid search trace is that the best combinations
 | RBF        | 84.07%   | 0.9630    | 0.6047 | 0.7429   |
 | Polynomial | 69.03%   | 1.0000    | 0.1860 | 0.3137   |
 
-These baselines are revealing rather than competitive. With `C = 1` and `γ = 0.1`:
+These baselines are revealing rather than competitive (see `figures/kernel_comparison_default.png` for the visual comparison). With `C = 1` and `γ = 0.1`:
 
 - **The Linear kernel collapsed to predicting almost everything as malignant.** Its recall of 1.0 looks impressive in isolation — it catches every malignant case — but its accuracy of 41.6% is *worse than the trivial "always benign" baseline of 62.7%*. Precision of 0.39 confirms that the predictions are essentially indiscriminate.
 - **The Polynomial kernel collapsed in the opposite direction**, predicting almost everything as benign. Its precision of 1.0 means it never produces a false positive, but its recall of 0.19 means it misses 81% of the actual cancer cases. In a medical context this would be catastrophic.
@@ -264,7 +264,7 @@ The lesson from the baseline table is not that SVMs are bad classifiers — it i
 
 #### Optimised Parameters
 
-After the grid search and retraining on the 80/20 split with the best per-kernel configuration:
+After the grid search and retraining on the 80/20 split with the best per-kernel configuration (see `figures/kernel_comparison_optimised.png` and `figures/default_vs_optimised.png` for visual comparisons):
 
 | Kernel     | `C`  | `γ`   | `d` | Accuracy | Precision | Recall | F1 Score | Support Vectors |
 |------------|------|-------|-----|----------|-----------|--------|----------|-----------------|
@@ -282,6 +282,8 @@ Two general points emerge from comparing the three:
 
 1. **Model complexity should match the data.** When the underlying problem is close to linearly separable, a simpler kernel beats a more flexible one. This is the bias–variance trade-off in concrete form: the Linear SVM has lower variance because it can only express linear boundaries, and on this dataset that is exactly the right inductive bias.
 2. **Hyperparameter tuning matters more than kernel choice.** The gap between Linear baseline (41.6%) and Linear optimised (97.4%) is much larger than the gap between any two optimised kernels (97.4% vs 90.3% vs 95.6%). For a practitioner, time spent on grid search yields larger returns than time spent on architectural choices.
+
+Confusion matrices for all four models (initial RBF baseline plus the three optimised kernels) are visualised in `figures/confusion_matrices.png`.
 
 #### Confusion Matrix — Best Model (Linear, Optimised)
 

@@ -65,10 +65,41 @@ The binary takes no command-line flags. A single run performs the full pipeline:
 8. Runs grid search over `C ∈ {0.1, 1, 10, 100}`, `γ ∈ {0.001, 0.01, 0.1, 1}`, and (for Polynomial only) `degree ∈ {2, 3, 4}`.
 9. Retrains each kernel with its grid-search winner and prints the final optimised results.
 
-Total runtime is a few seconds on a typical desktop CPU. Every step writes to stdout — redirect to a file if you want to capture the full trace:
+Total runtime is a few seconds on a typical desktop CPU. Every step writes to stdout — use `tee` to both see the output and save it for the plotting script:
 
 ```bash
-./build/svm_classifier > run.log
+./build/svm_classifier | tee run_output.txt
+```
+
+## Generate Figures
+
+A Python script (`plot_results.py` at the project root) parses the captured output and generates six publication-quality PNG figures:
+
+```bash
+python3 plot_results.py
+```
+
+This requires Python 3 with `matplotlib` and `numpy`. Figures are saved to `figures/` at 300 DPI:
+
+| File | Contents |
+|------|----------|
+| `confusion_matrices.png` | 2×2 heatmaps for initial RBF and all three optimised kernels |
+| `cv_folds.png` | 5-fold cross-validation accuracy bar chart with mean line |
+| `kernel_comparison_default.png` | Grouped bars: accuracy, precision, recall, F1 per kernel (default params) |
+| `kernel_comparison_optimised.png` | Same layout for optimised parameters |
+| `grid_search_heatmaps.png` | C vs gamma heatmaps per kernel (Polynomial split by degree) |
+| `default_vs_optimised.png` | Side-by-side accuracy comparison showing tuning impact |
+
+The script also supports piping directly from the classifier:
+
+```bash
+./build/svm_classifier | python3 plot_results.py --stdin
+```
+
+Or an explicit input file:
+
+```bash
+python3 plot_results.py --input path/to/output.txt
 ```
 
 ## Expected Output (Abbreviated)

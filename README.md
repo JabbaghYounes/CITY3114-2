@@ -1,6 +1,6 @@
 # SVM Classifier
 
-A Support Vector Machine (SVM) classifier built from scratch in C++ using the SMO (Sequential Minimal Optimization) algorithm. No external libraries and all components implemented manually.
+A Support Vector Machine (SVM) classifier built from scratch in C++ using the SMO (Sequential Minimal Optimization) algorithm.
 
 ## Features
 

@@ -4,12 +4,14 @@ A Support Vector Machine (SVM) classifier built from scratch in C++ using the SM
 
 ## Features
 
-- SVM with SMO training algorithm
+- SVM with SMO training algorithm and incremental error-cache update (O(n) per pair update)
 - Three kernel functions: Linear, RBF, Polynomial
 - Z-score feature normalisation
 - Evaluation: accuracy, confusion matrix, precision, recall, F1 score
 - 5-fold cross-validation
 - Kernel comparison
+- Hyperparameter grid search
+- Multi-dataset pipeline driver (runs over all configured `DatasetSpec` entries)
 
 ## Datasets
 
@@ -22,7 +24,7 @@ The classifier runs the full pipeline (load → normalise → split → train �
 | [Banknote Authentication](https://archive.ics.uci.edu/dataset/267/banknote+authentication) | 1372 | 4 | Forged / Genuine |
 | [Spambase](https://archive.ics.uci.edu/dataset/94/spambase) | 4601 | 57 | Spam / Ham |
 
-Grid search runs on the first three; Spambase skips it (a full grid over C/gamma/degree at 4601 samples would take hours with the current SMO).
+Grid search runs on the first three; Spambase skips it (set `run_grid_search=false` in its `DatasetSpec`) — a 400-fit grid at 4601 samples is still too long even with the incremental SMO. The full 4-dataset pipeline runs in roughly 2:45 on a typical desktop CPU.
 
 Download all four datasets:
 
@@ -52,9 +54,18 @@ After running the classifier, generate publication-quality plots from the output
 python3 scripts/plot_results.py
 ```
 
-This reads `resources/run_output.txt` and saves six PNG figures to `figures/` (confusion matrices, CV folds, kernel comparisons, grid search heatmaps, default vs optimised accuracy). Requires Python 3 with `matplotlib` and `numpy`.
+This reads `resources/run_output.txt`, splits it by `=== DATASET:` markers, and saves a per-dataset set of figures to `figures/` with the dataset slug as filename prefix:
 
-> **Note:** the plotting script currently parses a single-dataset section and treats the first dataset's results as the canonical run. With four datasets in the output it'll plot Wisconsin's results and ignore the others. Multi-dataset plotting is a follow-up.
+| Pattern | Contents |
+|---|---|
+| `<slug>_confusion_matrices.png` | 2×2 heatmaps for initial RBF and the three optimised kernels |
+| `<slug>_cv_folds.png` | 5-fold cross-validation accuracy bar chart with mean line |
+| `<slug>_kernel_comparison_default.png` | Grouped bars: accuracy, precision, recall, F1 per kernel (default params) |
+| `<slug>_kernel_comparison_optimised.png` | Same layout for optimised parameters |
+| `<slug>_grid_search_heatmaps.png` | C × γ heatmaps per kernel (Polynomial split by degree) |
+| `<slug>_default_vs_optimised.png` | Side-by-side accuracy comparison showing tuning impact |
+
+Datasets that skip grid search (currently Spambase) only get `cv_folds` and `kernel_comparison_default`. Wisconsin / Ionosphere / Banknote each get the full set of six. Requires Python 3 with `matplotlib` and `numpy`.
 
 ## Documentation
 

@@ -134,4 +134,4 @@ Every source of randomness in the codebase is seeded:
 - `grid_search` forwards its seed to every inner CV call.
 - The shuffles use a plain LCG (not `<random>`), which means the sequence is portable across platforms and compilers — the same seed produces the same shuffle on any machine.
 
-As a result, every accuracy, precision, recall, and F1 value reported in `resources/assignment-report.md` is exactly reproducible from a clean build.
+As a result, every train/test split and every k-fold partition is bitwise reproducible across platforms. The numerical solver itself is *not* strictly bit-for-bit portable: the SMO error cache is updated incrementally (see [algorithm.md](algorithm.md)), and incremental updates accumulate floating-point error in a path-dependent way that can vary between compilers/CPUs (FMA vs no-FMA, libm differences). In practice the test-set accuracies in `resources/assignment-report.md` are stable; the grid-search CV column is sensitive at the third decimal and may shift slightly between toolchains.

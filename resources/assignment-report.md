@@ -44,7 +44,7 @@ mkdir -p data
 curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data" -o data/wdbc.csv
 ```
 
-A complete run takes a few seconds on a typical desktop CPU and prints the baseline results, the cross-validation accuracy, the per-kernel comparison, the full grid-search trace, and the final results table for the optimised models. A companion Python script (`scripts/plot_results.py`) parses the program's stdout and generates publication-quality figures — confusion matrix heatmaps, kernel comparison bar charts, grid search heatmaps, and a cross-validation fold chart — into a `figures/` directory.
+A complete run iterates over four UCI binary-classification datasets (Wisconsin Breast Cancer is the primary one for this report; Ionosphere, Banknote Authentication, and Spambase are the additional ones referenced in §1.6 and Task 2), and for each prints the baseline results, the cross-validation accuracy, the per-kernel comparison, the full grid-search trace (where applicable), and the final results table for the optimised models. The full 4-dataset run takes about 2:45 on a typical desktop CPU; running just the Wisconsin section takes well under a minute. A companion Python script (`scripts/plot_results.py`) parses the program's stdout, splits it on `=== DATASET:` markers, and generates publication-quality figures per dataset — confusion matrix heatmaps, kernel comparison bar charts, grid search heatmaps, and a cross-validation fold chart — into a `figures/` directory with a slug prefix (e.g. `figures/wisconsin_*.png`).
 
 ### 1.2 Dataset
 
@@ -218,7 +218,7 @@ To establish a baseline before any tuning, each kernel was trained with the defa
 
 #### Why Cross-Validation
 
-Selecting hyperparameters by their performance on a single train/test split would be unreliable: a particular split might happen to favour one combination over another simply due to which 113 samples ended up in the test set. **k-fold cross-validation** addresses this by partitioning the (full, normalised) dataset into `k` equally sized folds, training on `k − 1` of them, evaluating on the held-out fold, and rotating through all `k` choices of held-out fold. The reported metric is the mean accuracy across the `k` runs. Five folds was chosen as a standard compromise: it gives reasonably stable estimates without making the grid search unaffordably slow. The per-fold accuracy spread is visualised in `figures/cv_folds.png`.
+Selecting hyperparameters by their performance on a single train/test split would be unreliable: a particular split might happen to favour one combination over another simply due to which 113 samples ended up in the test set. **k-fold cross-validation** addresses this by partitioning the (full, normalised) dataset into `k` equally sized folds, training on `k − 1` of them, evaluating on the held-out fold, and rotating through all `k` choices of held-out fold. The reported metric is the mean accuracy across the `k` runs. Five folds was chosen as a standard compromise: it gives reasonably stable estimates without making the grid search unaffordably slow. The per-fold accuracy spread is visualised in `figures/wisconsin_cv_folds.png`.
 
 It is worth noting that the cross-validation here uses **the full dataset, not just the training split**. This is the conventional approach for hyperparameter selection — the test split is only used at the very end, to give an unbiased estimate of generalisation for the final tuned model.
 
@@ -236,13 +236,13 @@ The grid search identified the following best configurations by 5-fold CV accura
 
 | Kernel     | Best `C` | Best `γ` | Best `degree` | CV Accuracy |
 |------------|----------|----------|---------------|-------------|
-| Linear     | 0.1      | —        | —             | 72.41%      |
+| Linear     | 0.1      | —        | —             | 75.59%      |
 | RBF        | 0.1      | 0.01     | —             | 90.16%      |
 | Polynomial | 1.0      | 0.001    | 3             | 89.41%      |
 
 The CV accuracies for the optimised hyperparameters look modest in this table (especially for Linear), but they reflect the **average across five different train/test splits**, and they are evaluated *before* the final retraining on the held-out 80/20 split. The held-out test results in §1.5 are noticeably better, particularly for the Linear kernel — a reminder that a single split can be optimistic relative to cross-validation.
 
-The grid search landscape is visualised as C-vs-gamma heatmaps in `figures/grid_search_heatmaps.png`, with the best cell highlighted for each kernel. A practical observation from the grid search trace is that the best combinations all involve **small** values of `C` and `γ`. This is consistent with the data being approximately linearly separable after normalisation: a small `C` allows a wide margin (good generalisation), and a small `γ` makes the RBF kernel behave more linearly (in the limit `γ → 0`, the RBF kernel approaches a constant). The grid search is therefore not just a brute-force optimiser — its results carry diagnostic information about the structure of the dataset.
+The grid search landscape is visualised as C-vs-gamma heatmaps in `figures/wisconsin_grid_search_heatmaps.png`, with the best cell highlighted for each kernel. A practical observation from the grid search trace is that the best combinations all involve **small** values of `C` and `γ`. This is consistent with the data being approximately linearly separable after normalisation: a small `C` allows a wide margin (good generalisation), and a small `γ` makes the RBF kernel behave more linearly (in the limit `γ → 0`, the RBF kernel approaches a constant). The grid search is therefore not just a brute-force optimiser — its results carry diagnostic information about the structure of the dataset.
 
 ### 1.5 Results
 
@@ -254,7 +254,7 @@ The grid search landscape is visualised as C-vs-gamma heatmaps in `figures/grid_
 | RBF        | 84.07%   | 0.9630    | 0.6047 | 0.7429   |
 | Polynomial | 69.03%   | 1.0000    | 0.1860 | 0.3137   |
 
-These baselines are revealing rather than competitive (see `figures/kernel_comparison_default.png` for the visual comparison). With `C = 1` and `γ = 0.1`:
+These baselines are revealing rather than competitive (see `figures/wisconsin_kernel_comparison_default.png` for the visual comparison). With `C = 1` and `γ = 0.1`:
 
 - **The Linear kernel collapsed to predicting almost everything as malignant.** Its recall of 1.0 looks impressive in isolation — it catches every malignant case — but its accuracy of 41.6% is *worse than the trivial "always benign" baseline of 62.7%*. Precision of 0.39 confirms that the predictions are essentially indiscriminate.
 - **The Polynomial kernel collapsed in the opposite direction**, predicting almost everything as benign. Its precision of 1.0 means it never produces a false positive, but its recall of 0.19 means it misses 81% of the actual cancer cases. In a medical context this would be catastrophic.
@@ -264,7 +264,7 @@ The lesson from the baseline table is not that SVMs are bad classifiers — it i
 
 #### Optimised Parameters
 
-After the grid search and retraining on the 80/20 split with the best per-kernel configuration (see `figures/kernel_comparison_optimised.png` and `figures/default_vs_optimised.png` for visual comparisons):
+After the grid search and retraining on the 80/20 split with the best per-kernel configuration (see `figures/wisconsin_kernel_comparison_optimised.png` and `figures/wisconsin_default_vs_optimised.png` for visual comparisons):
 
 | Kernel     | `C`  | `γ`   | `d` | Accuracy | Precision | Recall | F1 Score | Support Vectors |
 |------------|------|-------|-----|----------|-----------|--------|----------|-----------------|
@@ -283,7 +283,7 @@ Two general points emerge from comparing the three:
 1. **Model complexity should match the data.** When the underlying problem is close to linearly separable, a simpler kernel beats a more flexible one. This is the bias–variance trade-off in concrete form: the Linear SVM has lower variance because it can only express linear boundaries, and on this dataset that is exactly the right inductive bias.
 2. **Hyperparameter tuning matters more than kernel choice.** The gap between Linear baseline (41.6%) and Linear optimised (97.4%) is much larger than the gap between any two optimised kernels (97.4% vs 90.3% vs 95.6%). For a practitioner, time spent on grid search yields larger returns than time spent on architectural choices.
 
-Confusion matrices for all four models (initial RBF baseline plus the three optimised kernels) are visualised in `figures/confusion_matrices.png`.
+Confusion matrices for all four models (initial RBF baseline plus the three optimised kernels) are visualised in `figures/wisconsin_confusion_matrices.png`.
 
 #### Confusion Matrix — Best Model (Linear, Optimised)
 
@@ -294,7 +294,24 @@ Confusion matrices for all four models (initial RBF baseline plus the three opti
 
 The optimised Linear SVM correctly classified 110 out of 113 test samples. There are **zero false positives** (no benign tumour was incorrectly flagged as malignant) and **three false negatives** (three malignant tumours were missed). In a real clinical workflow, the three missed malignant cases would still be a concern — in screening, recall is the priority — but the overall picture is strong for a from-scratch implementation with no library dependencies.
 
-It is worth being honest about what these numbers do and do not show. They are evaluated on a *single* held-out 20% split. The 5-fold CV numbers in §1.4 are more conservative (CV accuracy for the Linear kernel was 72%, vs 97% on the held-out split), and the truth is somewhere between the two depending on how the data is partitioned. A more thorough evaluation would use repeated stratified k-fold CV on the held-out test set, but this is outside the scope of a single-binary demonstration.
+It is worth being honest about what these numbers do and do not show. They are evaluated on a *single* held-out 20% split. The 5-fold CV numbers in §1.4 are more conservative (CV accuracy for the Linear kernel was 75.6%, vs 97% on the held-out split), and the truth is somewhere between the two depending on how the data is partitioned. A more thorough evaluation would use repeated stratified k-fold CV on the held-out test set, but this is outside the scope of a single-binary demonstration.
+
+### 1.6 Extended Evaluation Across Additional Datasets
+
+Wisconsin Breast Cancer is the primary dataset for this report, but the same binary now runs the full pipeline on three further UCI binary-classification datasets — chosen to cover a range of sample counts (351 to 4601), feature counts (4 to 57), and problem domains (radar, banknote forensics, email filtering). Modelling code (kernel, SMO, evaluation) is unchanged across all four; only the `DatasetSpec` entry differs.
+
+| Dataset | Samples × Features | Best kernel (test acc / F1) | Best `C`, `γ`, `d` | Support vectors |
+|---|---|---|---|---|
+| Wisconsin (Breast Cancer) | 569 × 30 | **Linear** 97.35% / 0.9639 | C=0.1 | 16 / 456 |
+| Ionosphere | 351 × 34 | **RBF** 98.57% / 0.9892 | C=100, γ=0.1 | — |
+| Banknote Authentication | 1372 × 4 | **RBF** 96.72% / 0.9614 | C=10, γ=1 | — |
+| Spambase | 4601 × 57 | **RBF (default)** 75.87% / 0.7597 | C=1, γ=0.1 (no grid search) | — |
+
+Two patterns emerge. First, the optimal kernel changes with the dataset: Linear wins on Wisconsin (consistent with the near-linear separability discussed in §1.5), while RBF wins on both Ionosphere and Banknote. This is a concrete demonstration of the kernel trick paying off — there is no universally best kernel, and the same SMO solver picks up wildly different decision surfaces just by swapping the `Kernel` object. Second, every dataset where grid search ran benefits substantially from tuning over the defaults; the magnitude of that gap is what makes hyperparameter search non-optional in practice.
+
+Spambase is the cautionary case. Its 4601 samples are well past the comfortable scale of the precomputed-kernel-matrix SMO implemented here: a full grid search at this size would take several hours of wall-clock time even with the incremental error-cache update used by `SVM::train`, so the pipeline skips it (`run_grid_search=false` in the dataset spec). The default-RBF baseline of 75.9% is reported for completeness but is well below what a properly tuned model would achieve. This is the practical ceiling on the from-scratch implementation, and it is exactly the scalability limitation discussed in §2.2.
+
+The full set of cross-dataset figures lives in `figures/` with a per-dataset slug prefix (e.g. `figures/ionosphere_grid_search_heatmaps.png`).
 
 ---
 
@@ -306,7 +323,7 @@ SVMs are well suited to a broad class of supervised learning problems, and the e
 
 **High-dimensional data with limited samples.** SVMs handle the regime where the number of features `d` is large relative to the number of samples `n` better than most alternatives. On Breast Cancer Wisconsin we have `d = 30` and `n = 569`, which is comfortably inside SVM's strong-performance zone. The reason is theoretical: the generalisation error of a maximum-margin classifier depends on the *margin width*, not on the dimensionality of the input space. This is why SVMs were the algorithm of choice for many bioinformatics and text-classification problems throughout the late 1990s and 2000s, where feature counts in the thousands or tens of thousands are common but labelled samples are scarce.
 
-**Kernel-based versatility.** The kernel trick is what makes a single SVM framework applicable to linear, smoothly non-linear (RBF), and polynomial problems. Task 1 demonstrated this directly: exactly the same SMO solver, with the kernel object as the only change, produced three quite different classifiers. The kernel idea also generalises well beyond the three kernels implemented here — string kernels for text and biological sequences, graph kernels for molecules, and histogram-intersection kernels for image features have all been used successfully. This flexibility means SVMs can be applied to non-vector data simply by designing an appropriate similarity function, which is something most other algorithms cannot do directly.
+**Kernel-based versatility.** The kernel trick is what makes a single SVM framework applicable to linear, smoothly non-linear (RBF), and polynomial problems. Task 1 demonstrated this directly: exactly the same SMO solver, with the kernel object as the only change, produced three quite different classifiers. The §1.6 extended evaluation makes the point sharper: the *optimal kernel changes per dataset* — Linear wins on Wisconsin's near-linearly-separable nuclear-feature space, while RBF wins on both Ionosphere (γ=0.1, smooth non-linear boundary) and Banknote (γ=1, highly local boundary). The same code, the same hyperparameter grid, four datasets — and the kernel that wins is dictated by the data, not by the algorithm. The kernel idea also generalises well beyond the three kernels implemented here — string kernels for text and biological sequences, graph kernels for molecules, and histogram-intersection kernels for image features have all been used successfully. This flexibility means SVMs can be applied to non-vector data simply by designing an appropriate similarity function, which is something most other algorithms cannot do directly.
 
 **Built-in regularisation.** The maximum-margin objective acts as a structural form of regularisation. Unlike algorithms that minimise training error and then add an external penalty (like L2-regularised logistic regression), the SVM formulation makes margin width *part of* the objective. The `C` hyperparameter then provides explicit control over the trade-off between margin and training error, giving the practitioner a single knob to tune the bias–variance balance. In Task 1 the best `C` value was `0.1` for two of the three kernels — a small `C` corresponds to a wide margin, which is consistent with the data being largely separable.
 
@@ -322,7 +339,7 @@ In short: SVMs are a strong default choice for binary classification on tabular 
 
 Despite their strengths, SVMs have a number of practical limitations that the Task 1 experiments either revealed directly or hinted at.
 
-**Scalability to large datasets.** The most fundamental limitation is computational. Training an SVM with SMO has time complexity that scales between roughly O(n²) and O(n³) depending on the dataset and the kernel, and the precomputed kernel matrix (used in this implementation) has space complexity O(n²). On the 569-sample Wisconsin dataset this is fine — the kernel matrix uses about 2 MB and training completes in well under a second — but the same approach would not survive a dataset of 100,000 samples, whose kernel matrix would require 80 GB of RAM. There are workarounds (kernel caching, chunking, online SMO variants, low-rank approximations like the Nyström method, and budgeted SVMs), but they all add complexity. For datasets with millions of examples, SVMs are simply not the right tool — gradient-boosted trees or neural networks scale much better.
+**Scalability to large datasets.** The most fundamental limitation is computational. Training an SVM with SMO has time complexity that scales between roughly O(n²) and O(n³) depending on the dataset and the kernel, and the precomputed kernel matrix (used in this implementation) has space complexity O(n²). On the 569-sample Wisconsin dataset this is fine — the kernel matrix uses about 2 MB and training completes in a fraction of a second — but the same approach struggles much earlier than the headline numbers suggest. The §1.6 extended evaluation makes this concrete: on the 4601-sample Spambase dataset, a full grid search over the same `(C, γ, degree)` ranges as Wisconsin would take several hours of wall-clock time even with the O(n) incremental error-cache update used in `SVM::train`. The pipeline therefore disables grid search for Spambase by default, leaving an untuned 75.9% baseline rather than a tuned result. The same approach would not survive a dataset of 100,000 samples, whose kernel matrix alone would require 80 GB of RAM. There are workarounds (kernel caching, chunking, online SMO variants, low-rank approximations like the Nyström method, and budgeted SVMs), but they all add complexity. For datasets with millions of examples, SVMs are simply not the right tool — gradient-boosted trees or neural networks scale much better.
 
 **Sensitivity to hyperparameters.** Task 1 showed this dramatically: the Linear kernel went from **41.6% to 97.4% accuracy** purely from tuning `C`. Off-the-shelf SVMs with default parameters are essentially useless on most datasets. The `C` and `γ` parameters interact in non-obvious ways, and the right values depend strongly on the scale of the features, which is why normalisation is also mandatory. The standard solution is grid search or random search over the hyperparameter space, but this multiplies training time by the number of grid points (in Task 1, by a factor of around 80–240 depending on kernel).
 

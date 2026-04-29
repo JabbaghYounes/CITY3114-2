@@ -145,9 +145,21 @@ Both come from the KKT condition that any non-bound support vector must satisfy 
 - Else if `0 < α_j^new < C`, use `b = b2`.
 - Otherwise (both at a bound), use `b = (b1 + b2) / 2`.
 
-### Error Cache Refresh
+### Error Cache Update
 
-After every successful pair update, the entire error cache `E[k]` is recomputed by evaluating `f(x_k) − y_k` for all `k`. This is the simplest correct strategy. A more sophisticated implementation would update the cache incrementally — only entries affected by the change in `α_i`, `α_j`, and `b` need adjusting — which would cut the per-iteration cost by roughly a factor of `n`. On the 456-sample Wisconsin training set this is not a bottleneck, but it would become one for larger datasets.
+After every successful pair update the cache is updated *incrementally*, in O(n). The change in `f(x_k)` from the joint update is
+
+```
+Δf(x_k) = δα_i · y_i · K(x_i, x_k) + δα_j · y_j · K(x_j, x_k) + δb
+```
+
+so each entry is bumped by
+
+```
+E[k] ← E[k] + Δf(x_k)
+```
+
+instead of being rebuilt from the full sum `Σ_m α_m y_m K(x_m, x_k) + b − y_k`. That drops the per-update cost from O(n²) to O(n), which is the difference between the full 4-dataset pipeline taking ~12 minutes and ~2:45 on a typical desktop CPU. The trade-off is numerical: the incremental update accumulates floating-point error across the entire training run instead of recomputing fresh each iteration, so SMO converges to a near-equivalent (not bit-identical) solution. Test-set accuracies on Wisconsin and Ionosphere are unchanged from the rebuild-every-iteration version; Banknote Polynomial's grid winner shifts from `degree=2` to `degree=3` (a CV-tie reshuffle).
 
 ## Support Vector Extraction
 

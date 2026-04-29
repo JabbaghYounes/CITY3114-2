@@ -15,22 +15,20 @@ A Support Vector Machine (SVM) classifier built from scratch in C++ using the SM
 
 ## Datasets
 
-The classifier runs the full pipeline (load → normalise → split → train → 5-fold CV → kernel comparison → grid search → optimised retrain) on four UCI binary-classification datasets:
+The classifier runs the full pipeline (load → normalise → split → train → 5-fold CV → kernel comparison → grid search → optimised retrain) on three UCI binary-classification datasets:
 
 | Dataset | Samples | Features | Positive / Negative |
 |---|---|---|---|
-| [Breast Cancer Wisconsin](https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic) | 569 | 30 | Malignant / Benign |
 | [Ionosphere](https://archive.ics.uci.edu/dataset/52/ionosphere) | 351 | 34 | Good / Bad radar return |
 | [Banknote Authentication](https://archive.ics.uci.edu/dataset/267/banknote+authentication) | 1372 | 4 | Forged / Genuine |
 | [Spambase](https://archive.ics.uci.edu/dataset/94/spambase) | 4601 | 57 | Spam / Ham |
 
-Grid search runs on the first three; Spambase skips it (set `run_grid_search=false` in its `DatasetSpec`) — a 400-fit grid at 4601 samples is still too long even with the incremental SMO. The full 4-dataset pipeline runs in roughly 2:45 on a typical desktop CPU.
+Grid search runs on Ionosphere and Banknote; Spambase skips it (`run_grid_search=false` in its `DatasetSpec`) — even with the O(n) incremental SMO, a 400-fit grid at 4601 samples runs into hours. The full 3-dataset pipeline finishes in about 90 seconds on a typical desktop CPU.
 
-Download all four datasets:
+Download the three datasets:
 
 ```bash
 mkdir -p data
-curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data" -o data/wdbc.csv
 curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/ionosphere/ionosphere.data" -o data/ionosphere.data
 curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/00267/data_banknote_authentication.txt" -o data/banknote.txt
 curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/spambase/spambase.data" -o data/spambase.data
@@ -65,7 +63,7 @@ This reads `resources/run_output.txt`, splits it by `=== DATASET:` markers, and 
 | `<slug>_grid_search_heatmaps.png` | C × γ heatmaps per kernel (Polynomial split by degree) |
 | `<slug>_default_vs_optimised.png` | Side-by-side accuracy comparison showing tuning impact |
 
-Datasets that skip grid search (currently Spambase) only get `cv_folds` and `kernel_comparison_default`. Wisconsin / Ionosphere / Banknote each get the full set of six. Requires Python 3 with `matplotlib` and `numpy`.
+Datasets that skip grid search (currently Spambase) only get `cv_folds` and `kernel_comparison_default`. Ionosphere and Banknote each get the full set of six. Requires Python 3 with `matplotlib` and `numpy`.
 
 ## Documentation
 

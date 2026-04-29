@@ -16,8 +16,8 @@ struct DatasetSpec {
     int label_column;            // index after ID removal; -1 means last
     std::string positive_label;  // token mapped to +1; everything else -> -1
     int expected_features;
-    std::string positive_name;   // human label, e.g. "Malignant"
-    std::string negative_name;   // human label, e.g. "Benign"
+    std::string positive_name;   // human label, e.g. "Forged"
+    std::string negative_name;   // human label, e.g. "Genuine"
     bool run_grid_search = true; // disable for very large datasets
 };
 

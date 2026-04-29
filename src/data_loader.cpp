@@ -7,15 +7,13 @@
 #include <stdexcept>
 
 const std::vector<DatasetSpec> ALL_DATASETS = {
-    {"Wisconsin (Breast Cancer)", "data/wdbc.csv",
-     true, 0, "M", 30, "Malignant", "Benign", true},
     {"Ionosphere", "data/ionosphere.data",
      false, -1, "g", 34, "Good", "Bad", true},
     {"Banknote Authentication", "data/banknote.txt",
      false, -1, "1", 4, "Forged", "Genuine", true},
-    // Grid search disabled for Spambase (4601 samples × O(n²) SMO updates
-    // would push runtime into hours). Default RBF + CV + kernel comparison
-    // still run.
+    // Grid search disabled for Spambase (4601 samples × hundreds of SMO fits
+    // would still take hours even with the incremental error-cache update).
+    // Default RBF + CV + kernel comparison still run.
     {"Spambase", "data/spambase.data",
      false, -1, "1", 57, "Spam", "Ham", false},
 };

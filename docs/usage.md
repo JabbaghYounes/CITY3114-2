@@ -12,19 +12,17 @@ No third-party C++ libraries are needed — the project intentionally uses only 
 
 ## Datasets
 
-The classifier iterates over four UCI binary-classification datasets defined in `ALL_DATASETS` (in `src/data_loader.cpp`). All four files must be present before running:
+The classifier iterates over three UCI binary-classification datasets defined in `ALL_DATASETS` (in `src/data_loader.cpp`). All three files must be present before running:
 
 ```bash
 mkdir -p data
-curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data" -o data/wdbc.csv
-curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/ionosphere/ionosphere.data"        -o data/ionosphere.data
+curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/ionosphere/ionosphere.data"            -o data/ionosphere.data
 curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/00267/data_banknote_authentication.txt" -o data/banknote.txt
-curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/spambase/spambase.data"            -o data/spambase.data
+curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/spambase/spambase.data"                -o data/spambase.data
 ```
 
 | Dataset | Path | Samples × Features | Positive class | ID column | Label position |
 |---|---|---|---|---|---|
-| Wisconsin Breast Cancer | `data/wdbc.csv` | 569 × 30 | M (malignant) | yes | column 1 (after ID) |
 | Ionosphere | `data/ionosphere.data` | 351 × 34 | g (good radar return) | no | last column |
 | Banknote Authentication | `data/banknote.txt` | 1372 × 4 | 1 (forged) | no | last column |
 | Spambase | `data/spambase.data` | 4601 × 57 | 1 (spam) | no | last column |
@@ -70,7 +68,7 @@ The binary takes no command-line flags. `main()` loops over `ALL_DATASETS` and c
 
 Spambase is the only dataset with `run_grid_search=false` by default — its 4601 samples × 5-fold × 80-combo grid search would take well over an hour even with the incremental error-cache update.
 
-Total runtime for the full 4-dataset run is around 2:45 on a typical desktop CPU. Every step writes to stdout — use `tee` to both see the output and save it for the plotting script:
+Total runtime for the full 3-dataset run is around 90 seconds on a typical desktop CPU. Every step writes to stdout — use `tee` to both see the output and save it for the plotting script:
 
 ```bash
 ./build/svm_classifier | tee resources/run_output.txt
@@ -95,7 +93,7 @@ Requires Python 3 with `matplotlib` and `numpy`. Figures are saved to `figures/`
 | `<slug>_grid_search_heatmaps.png` | C × γ heatmaps per kernel (Polynomial split by degree) |
 | `<slug>_default_vs_optimised.png` | Side-by-side accuracy comparison showing tuning impact |
 
-The slug is the first word of the dataset name, lowercased and stripped to `[a-z0-9]+` — so `wisconsin`, `ionosphere`, `banknote`, `spambase`. Datasets that skip grid search (currently Spambase) only get `cv_folds` and `kernel_comparison_default`. The full run produces 20 figures (6 + 6 + 6 + 2).
+The slug is the first word of the dataset name, lowercased and stripped to `[a-z0-9]+` — so `ionosphere`, `banknote`, `spambase`. Datasets that skip grid search (currently Spambase) only get `cv_folds` and `kernel_comparison_default`. The full run produces 14 figures (6 + 6 + 2).
 
 The script also supports piping directly from the classifier:
 
@@ -116,18 +114,18 @@ The run prints `=== SVM Classifier (Multi-Dataset) ===` once at the top, then a 
 - **Dataset header:**
   ```
   ================================================================
-  === DATASET: Wisconsin (Breast Cancer)
+  === DATASET: Ionosphere
   ================================================================
 
   Loading dataset...
-  Samples: 569, Features: 30
-  Malignant (+1): 212, Benign (-1): 357
+  Samples: 351, Features: 34
+  Good (+1): 225, Bad (-1): 126
 
   Normalising features (z-score)...
-  Train: 456, Test: 113
+  Train: 281, Test: 70
   ```
 
-- **Default RBF baseline (`C = 1.0`, `γ = 0.1`):** an `Evaluation Results` block with accuracy, precision, recall, F1, and a confusion matrix. The matrix carries a class-name legend on the title line — e.g. `Confusion Matrix (+1=Malignant, -1=Benign):` — so the same `+1`/`-1` row labels stay aligned across datasets.
+- **Default RBF baseline (`C = 1.0`, `γ = 0.1`):** an `Evaluation Results` block with accuracy, precision, recall, F1, and a confusion matrix. The matrix carries a class-name legend on the title line — e.g. `Confusion Matrix (+1=Good, -1=Bad):` — so the same `+1`/`-1` row labels stay aligned across datasets.
 
 - **5-fold cross-validation:** one line per fold, then the mean accuracy.
 
@@ -137,7 +135,7 @@ The run prints `=== SVM Classifier (Multi-Dataset) ===` once at the top, then a 
 
 - **Optimised retraining (skipped for Spambase):** three final `Evaluation Results` blocks showing the tuned performance of each kernel.
 
-`resources/assignment-report.md` discusses the Wisconsin results in detail and references the multi-dataset run as supporting evidence in Task 2.
+`resources/assignment-report.md` is the cross-dataset comparison study built on this run output.
 
 ## Reproducibility
 
@@ -159,4 +157,4 @@ If you want to change the seed, modify the default `seed = 42` in the train/test
 cmake -B build -DCMAKE_CXX_COMPILER=g++-9
 ```
 
-**No output for tens of seconds** — Banknote's polynomial grid search (48 combinations × 5 folds = 240 SVM fits at 1372 samples) is the longest single phase in the run. The full 4-dataset pipeline takes ~2:45 in total.
+**No output for tens of seconds** — Banknote's polynomial grid search (48 combinations × 5 folds = 240 SVM fits at 1372 samples) is the longest single phase in the run. The full 3-dataset pipeline takes ~90 seconds in total.

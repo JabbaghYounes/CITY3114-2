@@ -159,7 +159,7 @@ so each entry is bumped by
 E[k] ← E[k] + Δf(x_k)
 ```
 
-instead of being rebuilt from the full sum `Σ_m α_m y_m K(x_m, x_k) + b − y_k`. That drops the per-update cost from O(n²) to O(n), which is the difference between the full 4-dataset pipeline taking ~12 minutes and ~2:45 on a typical desktop CPU. The trade-off is numerical: the incremental update accumulates floating-point error across the entire training run instead of recomputing fresh each iteration, so SMO converges to a near-equivalent (not bit-identical) solution. Test-set accuracies on Wisconsin and Ionosphere are unchanged from the rebuild-every-iteration version; Banknote Polynomial's grid winner shifts from `degree=2` to `degree=3` (a CV-tie reshuffle).
+instead of being rebuilt from the full sum `Σ_m α_m y_m K(x_m, x_k) + b − y_k`. That drops the per-update cost from O(n²) to O(n), enough that the full three-dataset pipeline finishes in about 90 seconds where a rebuild-every-iteration version on the same machine takes several minutes. The trade-off is numerical: the incremental update accumulates floating-point error across the entire training run instead of recomputing fresh each iteration, so SMO converges to a near-equivalent (not bit-identical) solution. Test-set accuracies on Ionosphere are unchanged from the rebuild-every-iteration version; Banknote's grid winners and final test accuracies are stable to within numerical noise.
 
 ## Support Vector Extraction
 

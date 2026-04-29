@@ -1,5 +1,13 @@
 # Implementation Plan: Multi-Dataset SVM Support
 
+> **Historical note (kept for lineage).** This plan describes the original
+> 4-dataset extension (Wisconsin + Ionosphere + Banknote + Spambase). The
+> project has since been restructured to drop Wisconsin and frame the
+> remaining three datasets as a cross-dataset comparison study — see
+> `drop-wisconsin-plan.md` for that follow-up migration. The Wisconsin
+> references below are accurate for the period this plan was executed and
+> are preserved unchanged.
+
 ## Goal
 
 Extend the SVM classifier to run the full pipeline (load → normalise → split → train/eval → CV → kernel comparison → grid search → optimised retrain) on four binary-classification datasets: Wisconsin (existing), Ionosphere, Spambase, Banknote.

@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Parse SVM classifier output and generate publication-quality figures."""
+"""Parse SVM classifier output and generate publication-quality figures.
+
+Multi-dataset aware: splits the run output on === DATASET: markers and
+produces a set of figures per dataset, named with the dataset slug as
+prefix (e.g. figures/wisconsin_confusion_matrices.png). Datasets that
+skip grid search produce a reduced set of figures.
+"""
 
 import argparse
 import re
@@ -31,6 +37,26 @@ KERNEL_COLORS = [BLUE, ORANGE, GREEN]
 # Parsing
 # ──────────────────────────────────────────────
 
+def split_by_dataset(text):
+    """Split run output into per-dataset sections.
+
+    Returns [(name, slug, section_text), ...]. If no === DATASET: markers
+    are present, returns a single entry with name="" and slug="".
+    """
+    parts = re.split(r"^=== DATASET:\s*(.+?)\s*$", text, flags=re.MULTILINE)
+    if len(parts) == 1:
+        return [("", "", text)]
+
+    sections = []
+    for i in range(1, len(parts), 2):
+        name = parts[i].strip()
+        body = parts[i + 1] if i + 1 < len(parts) else ""
+        # Slug = first word of name, lowercased + alnum-only
+        slug = re.sub(r"[^a-z0-9]+", "", name.split()[0].lower()) if name.split() else "dataset"
+        sections.append((name, slug, body))
+    return sections
+
+
 def parse_metrics(lines, i):
     """Parse an === Evaluation Results === block. Returns (metrics_dict, next_index)."""
     metrics = {}
@@ -59,7 +85,7 @@ def parse_metrics(lines, i):
 
 
 def parse_output(text):
-    """Parse full program output into structured dict."""
+    """Parse one dataset's output section into a structured dict."""
     lines = text.splitlines()
     data = {
         "initial_rbf": {},
@@ -75,14 +101,18 @@ def parse_output(text):
         line = lines[i].strip()
 
         # Skip noise
-        if not line or line.startswith("Training complete") or line.startswith("Loading") or line.startswith("Samples") or line.startswith("Malignant") or line.startswith("Normalising") or line.startswith("Train:"):
+        if (not line
+                or line.startswith("Training complete")
+                or line.startswith("Loading")
+                or line.startswith("Samples")
+                or line.startswith("Normalising")
+                or line.startswith("Train:")):
             i += 1
             continue
 
         # Initial RBF result
         if re.match(r"--- RBF Kernel \(C=", line):
             i += 1
-            # find next === Evaluation Results ===
             while i < len(lines) and "=== Evaluation Results ===" not in lines[i]:
                 i += 1
             data["initial_rbf"], i = parse_metrics(lines, i)
@@ -115,7 +145,9 @@ def parse_output(text):
             i += 1
             while i < len(lines):
                 cline = lines[i].strip()
-                if cline.startswith("=== Grid Search") or cline.startswith("=== SVM"):
+                if (cline.startswith("=== Grid Search")
+                        or cline.startswith("=== SVM")
+                        or cline.startswith("=== DATASET")):
                     break
                 if m := re.match(r"--- (\w+) Kernel ---", cline):
                     kernel_name = m.group(1)
@@ -137,7 +169,6 @@ def parse_output(text):
                 if gline.startswith("Training complete"):
                     i += 1
                     continue
-                # Grid search result line (with degree)
                 if gm := re.match(r"C=([\d.]+),\s*gamma=([\d.]+),\s*degree=(\d+)\s*-> CV accuracy:\s*([\d.]+)", gline):
                     gs["results"].append({
                         "C": float(gm.group(1)),
@@ -147,7 +178,6 @@ def parse_output(text):
                     })
                     i += 1
                     continue
-                # Grid search result line (no degree)
                 if gm := re.match(r"C=([\d.]+),\s*gamma=([\d.]+)\s*-> CV accuracy:\s*([\d.]+)", gline):
                     gs["results"].append({
                         "C": float(gm.group(1)),
@@ -156,7 +186,6 @@ def parse_output(text):
                     })
                     i += 1
                     continue
-                # Best line
                 if gm := re.match(r"Best: C=([\d.]+),\s*gamma=([\d.]+)(?:,\s*degree=(\d+))?\s*-> CV accuracy:\s*([\d.]+)", gline):
                     gs["best"] = {
                         "C": float(gm.group(1)),
@@ -209,11 +238,21 @@ def save_fig(fig, name):
     print(f"  Saved: {path}")
 
 
+def title_with_dataset(base, dataset_name):
+    return f"{base} — {dataset_name}" if dataset_name else base
+
+
+def filename(prefix, basename):
+    return f"{prefix}_{basename}" if prefix else basename
+
+
 # ──────────────────────────────────────────────
 # Figure 1: Confusion Matrices
 # ──────────────────────────────────────────────
 
-def plot_confusion_matrices(data):
+def plot_confusion_matrices(data, prefix, dataset_name):
+    if not data["initial_rbf"] or not data["optimised"]:
+        return
     panels = [
         ("Initial RBF\n(Default)", data["initial_rbf"]["cm"]),
         ("Linear\n(Optimised)", data["optimised"]["Linear"]["cm"]),
@@ -222,7 +261,8 @@ def plot_confusion_matrices(data):
     ]
 
     fig, axes = plt.subplots(1, 4, figsize=(16, 4))
-    fig.suptitle("Confusion Matrices", fontsize=16, fontweight="bold", y=1.02)
+    fig.suptitle(title_with_dataset("Confusion Matrices", dataset_name),
+                 fontsize=16, fontweight="bold", y=1.02)
 
     for ax, (title, cm) in zip(axes, panels):
         matrix = np.array([[cm["tp"], cm["fn"]],
@@ -243,15 +283,17 @@ def plot_confusion_matrices(data):
                         fontsize=14, fontweight="bold", color=color)
 
     fig.tight_layout()
-    save_fig(fig, "confusion_matrices.png")
+    save_fig(fig, filename(prefix, "confusion_matrices.png"))
 
 
 # ──────────────────────────────────────────────
 # Figure 2: 5-Fold CV
 # ──────────────────────────────────────────────
 
-def plot_cv_folds(data):
+def plot_cv_folds(data, prefix, dataset_name):
     folds = data["cv_folds"]
+    if not folds:
+        return
     mean = data["cv_mean"]
 
     fig, ax = plt.subplots(figsize=(8, 5))
@@ -267,24 +309,31 @@ def plot_cv_folds(data):
     ax.axhline(y=mean, color=RED, linestyle="--", linewidth=2, label=f"Mean = {mean:.4f}")
     ax.set_xlabel("Fold")
     ax.set_ylabel("Accuracy")
-    ax.set_title("5-Fold Cross-Validation (RBF Kernel)", fontweight="bold")
+    ax.set_title(title_with_dataset("5-Fold Cross-Validation (RBF Kernel)", dataset_name),
+                 fontweight="bold")
     ax.set_xticks(x)
     ax.set_xticklabels([f"Fold {i}" for i in x])
-    ax.set_ylim(0.80, 1.02)
+    # Auto-fit y range, keep some headroom for the value labels.
+    ymin = max(0.0, min(y) - 0.05)
+    ax.set_ylim(ymin, 1.02)
     ax.legend(fontsize=11)
     ax.grid(axis="y", alpha=0.3)
 
     fig.tight_layout()
-    save_fig(fig, "cv_folds.png")
+    save_fig(fig, filename(prefix, "cv_folds.png"))
 
 
 # ──────────────────────────────────────────────
 # Figure 3 & 4: Kernel Comparison (Default / Optimised)
 # ──────────────────────────────────────────────
 
-def plot_kernel_comparison(data, which, title_suffix, filename):
+def plot_kernel_comparison(data, which, title_suffix, basename, prefix, dataset_name):
     source = data[which]
+    if not source:
+        return
     kernels = ["Linear", "RBF", "Polynomial"]
+    if not all(k in source for k in kernels):
+        return
     metrics = ["accuracy", "precision", "recall", "f1"]
     metric_labels = ["Accuracy", "Precision", "Recall", "F1"]
 
@@ -306,25 +355,28 @@ def plot_kernel_comparison(data, which, title_suffix, filename):
     ax.set_xticks(x)
     ax.set_xticklabels(kernels, fontsize=12)
     ax.set_ylabel("Score")
-    ax.set_title(f"Kernel Comparison — {title_suffix}", fontweight="bold")
+    ax.set_title(title_with_dataset(f"Kernel Comparison — {title_suffix}", dataset_name),
+                 fontweight="bold")
     ax.set_ylim(0, 1.15)
     ax.legend(loc="upper right", fontsize=10)
     ax.grid(axis="y", alpha=0.3)
 
     fig.tight_layout()
-    save_fig(fig, filename)
+    save_fig(fig, filename(prefix, basename))
 
 
 # ──────────────────────────────────────────────
 # Figure 5: Grid Search Heatmaps
 # ──────────────────────────────────────────────
 
-def plot_grid_search_heatmaps(data):
+def plot_grid_search_heatmaps(data, prefix, dataset_name):
     gs = data["grid_search"]
+    if not gs or not all(k in gs for k in ("Linear", "RBF", "Polynomial")):
+        return
+
     C_vals = sorted({r["C"] for r in gs["RBF"]["results"]})
     gamma_vals = sorted({r["gamma"] for r in gs["RBF"]["results"]})
 
-    # Build 2D grids
     def build_grid(results, degree=None):
         grid = np.zeros((len(C_vals), len(gamma_vals)))
         for r in results:
@@ -335,30 +387,23 @@ def plot_grid_search_heatmaps(data):
             grid[ci, gi] = r["accuracy"]
         return grid
 
-    # Polynomial degrees
     poly_degrees = sorted({r["degree"] for r in gs["Polynomial"]["results"]})
 
-    # Layout: top row = Linear, RBF, (empty); bottom row = Poly deg 2, 3, 4
     fig = plt.figure(figsize=(17, 11))
-    fig.suptitle("Grid Search — CV Accuracy (C vs Gamma)", fontsize=16,
-                 fontweight="bold")
+    fig.suptitle(title_with_dataset("Grid Search — CV Accuracy (C vs Gamma)", dataset_name),
+                 fontsize=16, fontweight="bold")
 
-    # Manual gridspec for better spacing
     gs_layout = fig.add_gridspec(2, 3, hspace=0.35, wspace=0.35,
                                   left=0.06, right=0.92, top=0.92, bottom=0.06)
 
-    # Gather all panels: (ax, grid, title, best_dict)
     panels = []
-    # Linear
     ax_lin = fig.add_subplot(gs_layout[0, 0])
     panels.append((ax_lin, build_grid(gs["Linear"]["results"]),
                    "Linear", gs["Linear"]["best"]))
-    # RBF
     ax_rbf = fig.add_subplot(gs_layout[0, 1])
     panels.append((ax_rbf, build_grid(gs["RBF"]["results"]),
                    "RBF", gs["RBF"]["best"]))
 
-    # Polynomial by degree
     for idx, deg in enumerate(poly_degrees):
         ax_p = fig.add_subplot(gs_layout[1, idx])
         best = gs["Polynomial"]["best"]
@@ -387,28 +432,32 @@ def plot_grid_search_heatmaps(data):
                 ax.text(gi, ci, f"{val:.3f}", ha="center", va="center",
                         fontsize=8, color=color, fontweight="bold")
 
-        # Mark best cell
         if best is not None:
             bc = C_vals.index(best["C"])
             bg = gamma_vals.index(best["gamma"])
             ax.add_patch(Rectangle((bg - 0.5, bc - 0.5), 1, 1,
                                    fill=False, edgecolor="lime", linewidth=3))
 
-    # Colorbar in the empty top-right slot
     cbar_ax = fig.add_subplot(gs_layout[0, 2])
     cbar_ax.set_visible(False)
-    cbar = fig.colorbar(last_im, ax=cbar_ax, shrink=0.9, label="CV Accuracy",
-                        fraction=0.8, pad=0.0)
+    if last_im is not None:
+        fig.colorbar(last_im, ax=cbar_ax, shrink=0.9, label="CV Accuracy",
+                     fraction=0.8, pad=0.0)
 
-    save_fig(fig, "grid_search_heatmaps.png")
+    save_fig(fig, filename(prefix, "grid_search_heatmaps.png"))
 
 
 # ──────────────────────────────────────────────
 # Figure 6: Default vs Optimised
 # ──────────────────────────────────────────────
 
-def plot_default_vs_optimised(data):
+def plot_default_vs_optimised(data, prefix, dataset_name):
+    if not data["kernel_comparison"] or not data["optimised"]:
+        return
     kernels = ["Linear", "RBF", "Polynomial"]
+    if not all(k in data["kernel_comparison"] and k in data["optimised"] for k in kernels):
+        return
+
     default_acc = [data["kernel_comparison"][k]["accuracy"] for k in kernels]
     opt_acc = [data["optimised"][k]["accuracy"] for k in kernels]
 
@@ -435,13 +484,14 @@ def plot_default_vs_optimised(data):
     ax.set_xticks(x)
     ax.set_xticklabels(kernels, fontsize=12)
     ax.set_ylabel("Accuracy")
-    ax.set_title("Impact of Hyperparameter Tuning", fontweight="bold")
+    ax.set_title(title_with_dataset("Impact of Hyperparameter Tuning", dataset_name),
+                 fontweight="bold")
     ax.set_ylim(0, 1.18)
     ax.legend(fontsize=11)
     ax.grid(axis="y", alpha=0.3)
 
     fig.tight_layout()
-    save_fig(fig, "default_vs_optimised.png")
+    save_fig(fig, filename(prefix, "default_vs_optimised.png"))
 
 
 # ──────────────────────────────────────────────
@@ -465,31 +515,37 @@ def main():
             sys.exit(1)
         text = args.input.read_text()
 
-    print("Parsing output...")
-    data = parse_output(text)
-
-    # Validate parse
-    if not data["cv_folds"]:
-        print("Error: Could not parse CV fold data")
-        sys.exit(1)
-    if not data["kernel_comparison"]:
-        print("Error: Could not parse kernel comparison data")
-        sys.exit(1)
-
     OUTPUT_DIR.mkdir(exist_ok=True)
     setup_style()
 
-    print("Generating figures...")
-    plot_confusion_matrices(data)
-    plot_cv_folds(data)
-    plot_kernel_comparison(data, "kernel_comparison", "Default Parameters",
-                          "kernel_comparison_default.png")
-    plot_kernel_comparison(data, "optimised", "Optimised Parameters",
-                          "kernel_comparison_optimised.png")
-    plot_grid_search_heatmaps(data)
-    plot_default_vs_optimised(data)
+    sections = split_by_dataset(text)
+    print(f"Found {len(sections)} dataset section(s).")
 
-    print(f"\nDone. {len(list(OUTPUT_DIR.glob('*.png')))} figures saved to {OUTPUT_DIR}/")
+    total_figures = 0
+    for name, slug, body in sections:
+        label = name if name else "(single)"
+        print(f"\n=== {label} (slug: '{slug}') ===")
+        data = parse_output(body)
+
+        if not data["cv_folds"] and not data["kernel_comparison"]:
+            print("  No parseable data; skipping.")
+            continue
+
+        before = len(list(OUTPUT_DIR.glob("*.png")))
+
+        plot_confusion_matrices(data, slug, name)
+        plot_cv_folds(data, slug, name)
+        plot_kernel_comparison(data, "kernel_comparison", "Default Parameters",
+                               "kernel_comparison_default.png", slug, name)
+        plot_kernel_comparison(data, "optimised", "Optimised Parameters",
+                               "kernel_comparison_optimised.png", slug, name)
+        plot_grid_search_heatmaps(data, slug, name)
+        plot_default_vs_optimised(data, slug, name)
+
+        after = len(list(OUTPUT_DIR.glob("*.png")))
+        total_figures += (after - before)
+
+    print(f"\nDone. {total_figures} figures saved to {OUTPUT_DIR}/")
 
 
 if __name__ == "__main__":

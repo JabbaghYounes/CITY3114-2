@@ -45,9 +45,10 @@ main.cpp
 
 ### `data_loader` (`src/data_loader.{hpp,cpp}`)
 
-Owns the `Dataset` struct (`std::vector<std::vector<double>> X`, `std::vector<int> y`) and three free functions:
+Owns the `Dataset` struct (`std::vector<std::vector<double>> X`, `std::vector<int> y`) and three free functions, plus the `DatasetSpec` struct and the `ALL_DATASETS` table.
 
-- **`load_csv(filepath)`** — reads `data/wdbc.csv`, skips the patient-ID column, maps the diagnosis column `M`/`B` to integer labels `+1`/`−1`, and parses the 30 remaining numeric features per row.
+- **`DatasetSpec`** — describes a CSV's parse rules: filepath, whether there's an ID column, label index (-1 = last), the token mapped to `+1`, expected feature count, human-readable class names, and a `run_grid_search` flag. `ALL_DATASETS` is the per-binary list of datasets the pipeline iterates.
+- **`load_csv(spec)`** — tokenises each CSV line on commas, drops the ID column if `spec.has_id_column`, extracts the label at `spec.label_column` and maps it to `+1` if it equals `spec.positive_label` else `-1`, then parses the remaining tokens as the feature vector. Asserts the feature count matches `spec.expected_features`.
 - **`normalise(dataset)`** — z-score normalises each feature column in place using population mean and population standard deviation (dividing by `n`, not `n − 1`). A feature with near-zero variance is left untouched to avoid division by zero.
 - **`train_test_split(dataset, train, test, test_ratio, seed)`** — deterministically shuffles sample indices with a seeded linear congruential generator (`a = 1103515245`, `c = 12345`), then partitions into train and test sets. The same LCG constants are reused for k-fold shuffling in `evaluation` so that all runs are bitwise reproducible.
 
@@ -95,10 +96,10 @@ Metrics and model-selection helpers. This module never stores state; every funct
 
 ### `main` (`src/main.cpp`)
 
-A fixed, linear pipeline that ties everything together. There are no command-line flags — running the binary performs every step of the demonstration in one pass:
+`main()` loops over `ALL_DATASETS` and calls `run_pipeline(spec)` once per dataset. The per-dataset pipeline is fixed and linear — there are no command-line flags. For each dataset:
 
-1. Load `data/wdbc.csv` via `load_csv`.
-2. Count malignant vs. benign samples and report the class distribution.
+1. Load the CSV via `load_csv(spec)`.
+2. Count positive (`+1`) vs. negative (`-1`) samples (using `spec.positive_name` / `spec.negative_name` for the print).
 3. Z-score normalise the features.
 4. Split 80/20 into train/test with seed `42`.
 5. Train an RBF-kernel SVM with default `C = 1.0`, `γ = 0.1` and print the baseline evaluation.

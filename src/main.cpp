@@ -5,22 +5,24 @@
 #include "svm.hpp"
 #include "evaluation.hpp"
 
-int main() {
-    std::cout << "=== SVM Classifier - Breast Cancer Wisconsin ===" << std::endl;
+void run_pipeline(const DatasetSpec& spec) {
+    std::cout << "\n\n================================================================\n";
+    std::cout << "=== DATASET: " << spec.name << "\n";
+    std::cout << "================================================================" << std::endl;
 
     // 1. Load dataset
     std::cout << "\nLoading dataset..." << std::endl;
-    Dataset dataset = load_csv("data/wdbc.csv");
+    Dataset dataset = load_csv(spec);
     std::cout << "Samples: " << dataset.X.size()
               << ", Features: " << dataset.X[0].size() << std::endl;
 
-    int malignant = 0, benign = 0;
+    int positive = 0, negative = 0;
     for (int label : dataset.y) {
-        if (label == 1) ++malignant;
-        else ++benign;
+        if (label == 1) ++positive;
+        else ++negative;
     }
-    std::cout << "Malignant (M=+1): " << malignant
-              << ", Benign (B=-1): " << benign << std::endl;
+    std::cout << spec.positive_name << " (+1): " << positive
+              << ", " << spec.negative_name << " (-1): " << negative << std::endl;
 
     // 2. Normalise features
     std::cout << "\nNormalising features (z-score)..." << std::endl;
@@ -42,7 +44,7 @@ int main() {
     svm_rbf.train(train.X, train.y);
 
     std::vector<int> predictions = svm_rbf.predict(test.X);
-    print_results(predictions, test.y);
+    print_results(predictions, test.y, spec.positive_name, spec.negative_name);
 
     // 5. K-fold cross-validation with RBF
     std::cout << "\n--- 5-Fold Cross-Validation (RBF) ---" << std::endl;
@@ -72,10 +74,17 @@ int main() {
         svm.train(train.X, train.y);
 
         std::vector<int> preds = svm.predict(test.X);
-        print_results(preds, test.y);
+        print_results(preds, test.y, spec.positive_name, spec.negative_name);
     }
 
-    // 7. Hyperparameter optimisation via grid search
+    // 7. Hyperparameter optimisation via grid search (skip for huge datasets)
+    if (!spec.run_grid_search) {
+        std::cout << "\n=== Grid Search SKIPPED for " << spec.name
+                  << " (dataset too large for full grid search with current SMO) ==="
+                  << std::endl;
+        return;
+    }
+
     std::vector<double> C_values = {0.1, 1, 10, 100};
     std::vector<double> gamma_values = {0.001, 0.01, 0.1, 1};
     std::vector<int> degree_values = {2, 3, 4};
@@ -103,7 +112,15 @@ int main() {
         best_svm.train(train.X, train.y);
 
         std::vector<int> preds = best_svm.predict(test.X);
-        print_results(preds, test.y);
+        print_results(preds, test.y, spec.positive_name, spec.negative_name);
+    }
+}
+
+int main() {
+    std::cout << "=== SVM Classifier (Multi-Dataset) ===" << std::endl;
+
+    for (const auto& spec : ALL_DATASETS) {
+        run_pipeline(spec);
     }
 
     return 0;

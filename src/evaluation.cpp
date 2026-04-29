@@ -138,7 +138,9 @@ GridSearchResult grid_search(const Dataset& dataset, KernelType type,
     return best;
 }
 
-void print_results(const std::vector<int>& predicted, const std::vector<int>& actual) {
+void print_results(const std::vector<int>& predicted, const std::vector<int>& actual,
+                   const std::string& positive_name,
+                   const std::string& negative_name) {
     ConfusionMatrix cm = confusion_matrix(predicted, actual);
 
     std::cout << std::fixed << std::setprecision(4);
@@ -148,10 +150,15 @@ void print_results(const std::vector<int>& predicted, const std::vector<int>& ac
     std::cout << "Recall:    " << recall(cm) << std::endl;
     std::cout << "F1 Score:  " << f1_score(cm) << std::endl;
 
-    std::cout << "\nConfusion Matrix:" << std::endl;
+    std::string legend;
+    if (!positive_name.empty() && !negative_name.empty()) {
+        legend = " (+1=" + positive_name + ", -1=" + negative_name + ")";
+    }
+
+    std::cout << "\nConfusion Matrix" << legend << ":" << std::endl;
     std::cout << "                Predicted +1   Predicted -1" << std::endl;
-    std::cout << "  Actual +1 (M)    " << std::setw(5) << cm.tp
+    std::cout << "  Actual +1        " << std::setw(5) << cm.tp
               << std::setw(14) << cm.fn << std::endl;
-    std::cout << "  Actual -1 (B)    " << std::setw(5) << cm.fp
+    std::cout << "  Actual -1        " << std::setw(5) << cm.fp
               << std::setw(14) << cm.tn << std::endl;
 }

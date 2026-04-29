@@ -37,6 +37,8 @@ GridSearchResult grid_search(const Dataset& dataset, KernelType type,
                              const std::vector<int>& degree_values,
                              int k = 5, unsigned int seed = 42);
 
-void print_results(const std::vector<int>& predicted, const std::vector<int>& actual);
+void print_results(const std::vector<int>& predicted, const std::vector<int>& actual,
+                   const std::string& positive_name = "",
+                   const std::string& negative_name = "");
 
 #endif

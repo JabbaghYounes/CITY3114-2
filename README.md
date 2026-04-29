@@ -11,14 +11,27 @@ A Support Vector Machine (SVM) classifier built from scratch in C++ using the SM
 - 5-fold cross-validation
 - Kernel comparison
 
-## Dataset
+## Datasets
 
-[Breast Cancer Wisconsin (Diagnostic)](https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic) — 569 samples, 30 features, binary classification (Malignant / Benign).
+The classifier runs the full pipeline (load → normalise → split → train → 5-fold CV → kernel comparison → grid search → optimised retrain) on four UCI binary-classification datasets:
 
-Download the dataset and place it at `data/wdbc.csv`:
+| Dataset | Samples | Features | Positive / Negative |
+|---|---|---|---|
+| [Breast Cancer Wisconsin](https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic) | 569 | 30 | Malignant / Benign |
+| [Ionosphere](https://archive.ics.uci.edu/dataset/52/ionosphere) | 351 | 34 | Good / Bad radar return |
+| [Banknote Authentication](https://archive.ics.uci.edu/dataset/267/banknote+authentication) | 1372 | 4 | Forged / Genuine |
+| [Spambase](https://archive.ics.uci.edu/dataset/94/spambase) | 4601 | 57 | Spam / Ham |
+
+Grid search runs on the first three; Spambase skips it (a full grid over C/gamma/degree at 4601 samples would take hours with the current SMO).
+
+Download all four datasets:
+
 ```bash
 mkdir -p data
 curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data" -o data/wdbc.csv
+curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/ionosphere/ionosphere.data" -o data/ionosphere.data
+curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/00267/data_banknote_authentication.txt" -o data/banknote.txt
+curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/spambase/spambase.data" -o data/spambase.data
 ```
 
 ## Build and Run
@@ -40,6 +53,8 @@ python3 scripts/plot_results.py
 ```
 
 This reads `resources/run_output.txt` and saves six PNG figures to `figures/` (confusion matrices, CV folds, kernel comparisons, grid search heatmaps, default vs optimised accuracy). Requires Python 3 with `matplotlib` and `numpy`.
+
+> **Note:** the plotting script currently parses a single-dataset section and treats the first dataset's results as the canonical run. With four datasets in the output it'll plot Wisconsin's results and ignore the others. Multi-dataset plotting is a follow-up.
 
 ## Documentation
 

@@ -45,10 +45,10 @@ def parse_metrics(lines, i):
             metrics["recall"] = float(m.group(1))
         elif m := re.match(r"F1 Score:\s+([\d.]+)", line):
             metrics["f1"] = float(m.group(1))
-        elif m := re.match(r"Actual \+1 \(M\)\s+(\d+)\s+(\d+)", line):
+        elif m := re.match(r"Actual \+1(?:\s*\([^)]+\))?\s+(\d+)\s+(\d+)", line):
             cm["tp"] = int(m.group(1))
             cm["fn"] = int(m.group(2))
-        elif m := re.match(r"Actual -1 \(B\)\s+(\d+)\s+(\d+)", line):
+        elif m := re.match(r"Actual -1(?:\s*\([^)]+\))?\s+(\d+)\s+(\d+)", line):
             cm["fp"] = int(m.group(1))
             cm["tn"] = int(m.group(2))
             metrics["cm"] = cm

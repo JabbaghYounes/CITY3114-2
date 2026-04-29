@@ -6,33 +6,80 @@
 #include <cmath>
 #include <stdexcept>
 
-Dataset load_csv(const std::string& filepath) {
+const std::vector<DatasetSpec> ALL_DATASETS = {
+    {"Wisconsin (Breast Cancer)", "data/wdbc.csv",
+     true, 0, "M", 30, "Malignant", "Benign", true},
+    {"Ionosphere", "data/ionosphere.data",
+     false, -1, "g", 34, "Good", "Bad", true},
+    {"Banknote Authentication", "data/banknote.txt",
+     false, -1, "1", 4, "Forged", "Genuine", true},
+    // Grid search disabled for Spambase (4601 samples × O(n²) SMO updates
+    // would push runtime into hours). Default RBF + CV + kernel comparison
+    // still run.
+    {"Spambase", "data/spambase.data",
+     false, -1, "1", 57, "Spam", "Ham", false},
+};
+
+static std::string trim(const std::string& s) {
+    size_t a = 0;
+    size_t b = s.size();
+    while (a < b && std::isspace(static_cast<unsigned char>(s[a]))) ++a;
+    while (b > a && std::isspace(static_cast<unsigned char>(s[b - 1]))) --b;
+    return s.substr(a, b - a);
+}
+
+Dataset load_csv(const DatasetSpec& spec) {
     Dataset dataset;
-    std::ifstream file(filepath);
+    std::ifstream file(spec.filepath);
     if (!file.is_open()) {
-        throw std::runtime_error("Cannot open file: " + filepath);
+        throw std::runtime_error("Cannot open file: " + spec.filepath);
     }
 
     std::string line;
+    int line_num = 0;
     while (std::getline(file, line)) {
-        if (line.empty()) continue;
+        ++line_num;
+        if (trim(line).empty()) continue;
 
+        std::vector<std::string> tokens;
         std::stringstream ss(line);
         std::string token;
-
-        // Skip ID column
-        std::getline(ss, token, ',');
-
-        // Read diagnosis: M -> +1, B -> -1
-        std::getline(ss, token, ',');
-        dataset.y.push_back(token == "M" ? 1 : -1);
-
-        // Read 30 feature columns
-        std::vector<double> features;
         while (std::getline(ss, token, ',')) {
-            features.push_back(std::stod(token));
+            tokens.push_back(trim(token));
         }
-        dataset.X.push_back(features);
+
+        if (spec.has_id_column) {
+            tokens.erase(tokens.begin());
+        }
+
+        int label_idx = (spec.label_column == -1)
+            ? static_cast<int>(tokens.size()) - 1
+            : spec.label_column;
+
+        if (label_idx < 0 || label_idx >= static_cast<int>(tokens.size())) {
+            throw std::runtime_error(
+                spec.name + ": label index " + std::to_string(label_idx) +
+                " out of range on line " + std::to_string(line_num));
+        }
+
+        dataset.y.push_back(tokens[label_idx] == spec.positive_label ? 1 : -1);
+
+        std::vector<double> features;
+        features.reserve(tokens.size() - 1);
+        for (int i = 0; i < static_cast<int>(tokens.size()); ++i) {
+            if (i == label_idx) continue;
+            features.push_back(std::stod(tokens[i]));
+        }
+
+        if (static_cast<int>(features.size()) != spec.expected_features) {
+            throw std::runtime_error(
+                spec.name + ": feature count mismatch on line " +
+                std::to_string(line_num) + " — expected " +
+                std::to_string(spec.expected_features) + ", got " +
+                std::to_string(features.size()));
+        }
+
+        dataset.X.push_back(std::move(features));
     }
 
     return dataset;

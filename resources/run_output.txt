@@ -89,99 +89,99 @@ Training complete. Support vectors: 10/456
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 16/452
-  C=0.1000, gamma=0.0010  -> CV accuracy: 0.7241
+  C=0.1000, gamma=0.0010  -> CV accuracy: 0.7559
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 10/456
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 16/452
-  C=0.1000, gamma=0.0100  -> CV accuracy: 0.7241
+  C=0.1000, gamma=0.0100  -> CV accuracy: 0.7559
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 10/456
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 16/452
-  C=0.1000, gamma=0.1000  -> CV accuracy: 0.7241
+  C=0.1000, gamma=0.1000  -> CV accuracy: 0.7559
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 10/456
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 16/452
-  C=0.1000, gamma=1.0000  -> CV accuracy: 0.7241
+  C=0.1000, gamma=1.0000  -> CV accuracy: 0.7559
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 8/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 18/452
-  C=1.0000, gamma=0.0010  -> CV accuracy: 0.6925
+  C=1.0000, gamma=0.0010  -> CV accuracy: 0.7244
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 8/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 18/452
-  C=1.0000, gamma=0.0100  -> CV accuracy: 0.6925
+  C=1.0000, gamma=0.0100  -> CV accuracy: 0.7244
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 8/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 18/452
-  C=1.0000, gamma=0.1000  -> CV accuracy: 0.6925
+  C=1.0000, gamma=0.1000  -> CV accuracy: 0.7244
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 8/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 18/452
-  C=1.0000, gamma=1.0000  -> CV accuracy: 0.6925
+  C=1.0000, gamma=1.0000  -> CV accuracy: 0.7244
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 8/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 18/452
-  C=10.0000, gamma=0.0010  -> CV accuracy: 0.6925
+  C=10.0000, gamma=0.0010  -> CV accuracy: 0.7244
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 8/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 18/452
-  C=10.0000, gamma=0.0100  -> CV accuracy: 0.6925
+  C=10.0000, gamma=0.0100  -> CV accuracy: 0.7244
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 8/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 18/452
-  C=10.0000, gamma=0.1000  -> CV accuracy: 0.6925
+  C=10.0000, gamma=0.1000  -> CV accuracy: 0.7244
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 8/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 18/452
-  C=10.0000, gamma=1.0000  -> CV accuracy: 0.6925
+  C=10.0000, gamma=1.0000  -> CV accuracy: 0.7244
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 8/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 18/452
-  C=100.0000, gamma=0.0010  -> CV accuracy: 0.6925
+  C=100.0000, gamma=0.0010  -> CV accuracy: 0.7244
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 8/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 18/452
-  C=100.0000, gamma=0.0100  -> CV accuracy: 0.6925
+  C=100.0000, gamma=0.0100  -> CV accuracy: 0.7244
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 8/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 18/452
-  C=100.0000, gamma=0.1000  -> CV accuracy: 0.6925
+  C=100.0000, gamma=0.1000  -> CV accuracy: 0.7244
 Training complete. Support vectors: 12/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 8/456
 Training complete. Support vectors: 9/456
 Training complete. Support vectors: 18/452
-  C=100.0000, gamma=1.0000  -> CV accuracy: 0.6925
+  C=100.0000, gamma=1.0000  -> CV accuracy: 0.7244
 
-  Best: C=0.1000, gamma=0.0010 -> CV accuracy: 0.7241
+  Best: C=0.1000, gamma=0.0010 -> CV accuracy: 0.7559
 
 --- Linear (Optimised) ---
 Training complete. Support vectors: 16/456
@@ -240,9 +240,9 @@ Training complete. Support vectors: 77/456
 Training complete. Support vectors: 42/456
 Training complete. Support vectors: 32/452
   C=1.0000, gamma=0.1000  -> CV accuracy: 0.9002
+Training complete. Support vectors: 454/456
 Training complete. Support vectors: 455/456
-Training complete. Support vectors: 455/456
-Training complete. Support vectors: 455/456
+Training complete. Support vectors: 454/456
 Training complete. Support vectors: 453/456
 Training complete. Support vectors: 449/452
   C=1.0000, gamma=1.0000  -> CV accuracy: 0.6310
@@ -374,16 +374,16 @@ Training complete. Support vectors: 2/452
   C=0.1000, gamma=1.0000, degree=2  -> CV accuracy: 0.6801
 Training complete. Support vectors: 2/456
 Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/452
-  C=0.1000, gamma=1.0000, degree=3  -> CV accuracy: 0.4749
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
+Training complete. Support vectors: 5/456
 Training complete. Support vectors: 3/456
 Training complete. Support vectors: 3/452
-  C=0.1000, gamma=1.0000, degree=4  -> CV accuracy: 0.4396
+  C=0.1000, gamma=1.0000, degree=3  -> CV accuracy: 0.5191
+Training complete. Support vectors: 4/456
+Training complete. Support vectors: 3/456
+Training complete. Support vectors: 4/456
+Training complete. Support vectors: 3/456
+Training complete. Support vectors: 3/452
+  C=0.1000, gamma=1.0000, degree=4  -> CV accuracy: 0.3918
 Training complete. Support vectors: 14/456
 Training complete. Support vectors: 18/456
 Training complete. Support vectors: 12/456
@@ -419,7 +419,7 @@ Training complete. Support vectors: 2/456
 Training complete. Support vectors: 2/456
 Training complete. Support vectors: 2/456
 Training complete. Support vectors: 2/452
-  C=1.0000, gamma=0.0100, degree=4  -> CV accuracy: 0.6463
+  C=1.0000, gamma=0.0100, degree=4  -> CV accuracy: 0.7525
 Training complete. Support vectors: 4/456
 Training complete. Support vectors: 2/456
 Training complete. Support vectors: 2/456
@@ -446,16 +446,16 @@ Training complete. Support vectors: 2/452
   C=1.0000, gamma=1.0000, degree=2  -> CV accuracy: 0.6801
 Training complete. Support vectors: 2/456
 Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/452
-  C=1.0000, gamma=1.0000, degree=3  -> CV accuracy: 0.4749
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
+Training complete. Support vectors: 5/456
 Training complete. Support vectors: 3/456
 Training complete. Support vectors: 3/452
-  C=1.0000, gamma=1.0000, degree=4  -> CV accuracy: 0.4396
+  C=1.0000, gamma=1.0000, degree=3  -> CV accuracy: 0.5191
+Training complete. Support vectors: 4/456
+Training complete. Support vectors: 3/456
+Training complete. Support vectors: 4/456
+Training complete. Support vectors: 3/456
+Training complete. Support vectors: 3/452
+  C=1.0000, gamma=1.0000, degree=4  -> CV accuracy: 0.3918
 Training complete. Support vectors: 10/456
 Training complete. Support vectors: 6/456
 Training complete. Support vectors: 8/456
@@ -491,7 +491,7 @@ Training complete. Support vectors: 2/456
 Training complete. Support vectors: 2/456
 Training complete. Support vectors: 2/456
 Training complete. Support vectors: 2/452
-  C=10.0000, gamma=0.0100, degree=4  -> CV accuracy: 0.6463
+  C=10.0000, gamma=0.0100, degree=4  -> CV accuracy: 0.7525
 Training complete. Support vectors: 4/456
 Training complete. Support vectors: 2/456
 Training complete. Support vectors: 2/456
@@ -518,16 +518,16 @@ Training complete. Support vectors: 2/452
   C=10.0000, gamma=1.0000, degree=2  -> CV accuracy: 0.6801
 Training complete. Support vectors: 2/456
 Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/452
-  C=10.0000, gamma=1.0000, degree=3  -> CV accuracy: 0.4749
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
+Training complete. Support vectors: 5/456
 Training complete. Support vectors: 3/456
 Training complete. Support vectors: 3/452
-  C=10.0000, gamma=1.0000, degree=4  -> CV accuracy: 0.4396
+  C=10.0000, gamma=1.0000, degree=3  -> CV accuracy: 0.5191
+Training complete. Support vectors: 4/456
+Training complete. Support vectors: 3/456
+Training complete. Support vectors: 4/456
+Training complete. Support vectors: 3/456
+Training complete. Support vectors: 3/452
+  C=10.0000, gamma=1.0000, degree=4  -> CV accuracy: 0.3918
 Training complete. Support vectors: 10/456
 Training complete. Support vectors: 10/456
 Training complete. Support vectors: 11/456
@@ -563,7 +563,7 @@ Training complete. Support vectors: 2/456
 Training complete. Support vectors: 2/456
 Training complete. Support vectors: 2/456
 Training complete. Support vectors: 2/452
-  C=100.0000, gamma=0.0100, degree=4  -> CV accuracy: 0.6463
+  C=100.0000, gamma=0.0100, degree=4  -> CV accuracy: 0.7525
 Training complete. Support vectors: 4/456
 Training complete. Support vectors: 2/456
 Training complete. Support vectors: 2/456
@@ -590,16 +590,16 @@ Training complete. Support vectors: 2/452
   C=100.0000, gamma=1.0000, degree=2  -> CV accuracy: 0.6801
 Training complete. Support vectors: 2/456
 Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/452
-  C=100.0000, gamma=1.0000, degree=3  -> CV accuracy: 0.4749
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
-Training complete. Support vectors: 3/456
+Training complete. Support vectors: 5/456
 Training complete. Support vectors: 3/456
 Training complete. Support vectors: 3/452
-  C=100.0000, gamma=1.0000, degree=4  -> CV accuracy: 0.4396
+  C=100.0000, gamma=1.0000, degree=3  -> CV accuracy: 0.5191
+Training complete. Support vectors: 4/456
+Training complete. Support vectors: 3/456
+Training complete. Support vectors: 4/456
+Training complete. Support vectors: 3/456
+Training complete. Support vectors: 3/452
+  C=100.0000, gamma=1.0000, degree=4  -> CV accuracy: 0.3918
 
   Best: C=1.0000, gamma=0.0010, degree=3 -> CV accuracy: 0.8941
 
@@ -857,12 +857,12 @@ Training complete. Support vectors: 32/281
 Training complete. Support vectors: 30/281
 Training complete. Support vectors: 42/280
   C=1.0000, gamma=0.1000  -> CV accuracy: 0.8516
-Training complete. Support vectors: 178/281
+Training complete. Support vectors: 176/281
 Training complete. Support vectors: 208/281
-Training complete. Support vectors: 158/281
-Training complete. Support vectors: 163/281
+Training complete. Support vectors: 197/281
+Training complete. Support vectors: 201/281
 Training complete. Support vectors: 205/280
-  C=1.0000, gamma=1.0000  -> CV accuracy: 0.7267
+  C=1.0000, gamma=1.0000  -> CV accuracy: 0.6953
 Training complete. Support vectors: 27/281
 Training complete. Support vectors: 30/281
 Training complete. Support vectors: 28/281
@@ -881,12 +881,12 @@ Training complete. Support vectors: 68/281
 Training complete. Support vectors: 103/281
 Training complete. Support vectors: 98/280
   C=10.0000, gamma=0.1000  -> CV accuracy: 0.9346
-Training complete. Support vectors: 241/281
+Training complete. Support vectors: 242/281
 Training complete. Support vectors: 209/281
 Training complete. Support vectors: 243/281
-Training complete. Support vectors: 242/281
+Training complete. Support vectors: 241/281
 Training complete. Support vectors: 241/280
-  C=10.0000, gamma=1.0000  -> CV accuracy: 0.8459
+  C=10.0000, gamma=1.0000  -> CV accuracy: 0.8373
 Training complete. Support vectors: 45/281
 Training complete. Support vectors: 56/281
 Training complete. Support vectors: 62/281
@@ -905,12 +905,12 @@ Training complete. Support vectors: 68/281
 Training complete. Support vectors: 103/281
 Training complete. Support vectors: 100/280
   C=100.0000, gamma=0.1000  -> CV accuracy: 0.9515
-Training complete. Support vectors: 241/281
+Training complete. Support vectors: 242/281
 Training complete. Support vectors: 209/281
 Training complete. Support vectors: 243/281
-Training complete. Support vectors: 242/281
+Training complete. Support vectors: 241/281
 Training complete. Support vectors: 241/280
-  C=100.0000, gamma=1.0000  -> CV accuracy: 0.8459
+  C=100.0000, gamma=1.0000  -> CV accuracy: 0.8373
 
   Best: C=100.0000, gamma=0.1000 -> CV accuracy: 0.9515
 
@@ -971,18 +971,18 @@ Training complete. Support vectors: 48/281
 Training complete. Support vectors: 48/281
 Training complete. Support vectors: 50/280
   C=0.1000, gamma=0.1000, degree=2  -> CV accuracy: 0.7330
-Training complete. Support vectors: 46/281
+Training complete. Support vectors: 30/281
 Training complete. Support vectors: 54/281
 Training complete. Support vectors: 59/281
-Training complete. Support vectors: 41/281
-Training complete. Support vectors: 67/280
-  C=0.1000, gamma=0.1000, degree=3  -> CV accuracy: 0.7831
+Training complete. Support vectors: 50/281
+Training complete. Support vectors: 66/280
+  C=0.1000, gamma=0.1000, degree=3  -> CV accuracy: 0.6617
 Training complete. Support vectors: 25/281
 Training complete. Support vectors: 56/281
 Training complete. Support vectors: 54/281
 Training complete. Support vectors: 45/281
-Training complete. Support vectors: 66/280
-  C=0.1000, gamma=0.1000, degree=4  -> CV accuracy: 0.5671
+Training complete. Support vectors: 58/280
+  C=0.1000, gamma=0.1000, degree=4  -> CV accuracy: 0.5502
 Training complete. Support vectors: 46/281
 Training complete. Support vectors: 42/281
 Training complete. Support vectors: 47/281
@@ -990,11 +990,11 @@ Training complete. Support vectors: 56/281
 Training complete. Support vectors: 44/280
   C=0.1000, gamma=1.0000, degree=2  -> CV accuracy: 0.6729
 Training complete. Support vectors: 3/281
-Training complete. Support vectors: 5/281
-Training complete. Support vectors: 9/281
-Training complete. Support vectors: 10/281
-Training complete. Support vectors: 9/280
-  C=0.1000, gamma=1.0000, degree=3  -> CV accuracy: 0.4532
+Training complete. Support vectors: 6/281
+Training complete. Support vectors: 19/281
+Training complete. Support vectors: 12/281
+Training complete. Support vectors: 11/280
+  C=0.1000, gamma=1.0000, degree=3  -> CV accuracy: 0.4588
 Training complete. Support vectors: 3/281
 Training complete. Support vectors: 2/281
 Training complete. Support vectors: 2/281
@@ -1040,20 +1040,20 @@ Training complete. Support vectors: 60/280
 Training complete. Support vectors: 45/281
 Training complete. Support vectors: 37/281
 Training complete. Support vectors: 44/281
-Training complete. Support vectors: 70/281
+Training complete. Support vectors: 53/281
 Training complete. Support vectors: 38/280
-  C=1.0000, gamma=0.1000, degree=2  -> CV accuracy: 0.6299
-Training complete. Support vectors: 50/281
+  C=1.0000, gamma=0.1000, degree=2  -> CV accuracy: 0.6214
+Training complete. Support vectors: 30/281
 Training complete. Support vectors: 59/281
 Training complete. Support vectors: 61/281
-Training complete. Support vectors: 41/281
-Training complete. Support vectors: 68/280
-  C=1.0000, gamma=0.1000, degree=3  -> CV accuracy: 0.7577
+Training complete. Support vectors: 39/281
+Training complete. Support vectors: 80/280
+  C=1.0000, gamma=0.1000, degree=3  -> CV accuracy: 0.7407
 Training complete. Support vectors: 25/281
 Training complete. Support vectors: 56/281
 Training complete. Support vectors: 40/281
 Training complete. Support vectors: 45/281
-Training complete. Support vectors: 38/280
+Training complete. Support vectors: 37/280
   C=1.0000, gamma=0.1000, degree=4  -> CV accuracy: 0.5331
 Training complete. Support vectors: 46/281
 Training complete. Support vectors: 42/281
@@ -1062,11 +1062,11 @@ Training complete. Support vectors: 56/281
 Training complete. Support vectors: 44/280
   C=1.0000, gamma=1.0000, degree=2  -> CV accuracy: 0.6729
 Training complete. Support vectors: 3/281
-Training complete. Support vectors: 5/281
-Training complete. Support vectors: 9/281
-Training complete. Support vectors: 10/281
-Training complete. Support vectors: 9/280
-  C=1.0000, gamma=1.0000, degree=3  -> CV accuracy: 0.4532
+Training complete. Support vectors: 6/281
+Training complete. Support vectors: 19/281
+Training complete. Support vectors: 12/281
+Training complete. Support vectors: 11/280
+  C=1.0000, gamma=1.0000, degree=3  -> CV accuracy: 0.4588
 Training complete. Support vectors: 3/281
 Training complete. Support vectors: 2/281
 Training complete. Support vectors: 2/281
@@ -1115,17 +1115,17 @@ Training complete. Support vectors: 44/281
 Training complete. Support vectors: 62/281
 Training complete. Support vectors: 40/280
   C=10.0000, gamma=0.1000, degree=2  -> CV accuracy: 0.6357
-Training complete. Support vectors: 50/281
+Training complete. Support vectors: 30/281
 Training complete. Support vectors: 59/281
 Training complete. Support vectors: 61/281
-Training complete. Support vectors: 41/281
-Training complete. Support vectors: 68/280
-  C=10.0000, gamma=0.1000, degree=3  -> CV accuracy: 0.7577
+Training complete. Support vectors: 39/281
+Training complete. Support vectors: 80/280
+  C=10.0000, gamma=0.1000, degree=3  -> CV accuracy: 0.7407
 Training complete. Support vectors: 25/281
 Training complete. Support vectors: 56/281
 Training complete. Support vectors: 40/281
 Training complete. Support vectors: 45/281
-Training complete. Support vectors: 38/280
+Training complete. Support vectors: 37/280
   C=10.0000, gamma=0.1000, degree=4  -> CV accuracy: 0.5331
 Training complete. Support vectors: 46/281
 Training complete. Support vectors: 42/281
@@ -1134,11 +1134,11 @@ Training complete. Support vectors: 56/281
 Training complete. Support vectors: 44/280
   C=10.0000, gamma=1.0000, degree=2  -> CV accuracy: 0.6729
 Training complete. Support vectors: 3/281
-Training complete. Support vectors: 5/281
-Training complete. Support vectors: 9/281
-Training complete. Support vectors: 10/281
-Training complete. Support vectors: 9/280
-  C=10.0000, gamma=1.0000, degree=3  -> CV accuracy: 0.4532
+Training complete. Support vectors: 6/281
+Training complete. Support vectors: 19/281
+Training complete. Support vectors: 12/281
+Training complete. Support vectors: 11/280
+  C=10.0000, gamma=1.0000, degree=3  -> CV accuracy: 0.4588
 Training complete. Support vectors: 3/281
 Training complete. Support vectors: 2/281
 Training complete. Support vectors: 2/281
@@ -1154,15 +1154,15 @@ Training complete. Support vectors: 47/280
 Training complete. Support vectors: 70/281
 Training complete. Support vectors: 54/281
 Training complete. Support vectors: 93/281
-Training complete. Support vectors: 52/281
-Training complete. Support vectors: 66/280
-  C=100.0000, gamma=0.0010, degree=3  -> CV accuracy: 0.6204
+Training complete. Support vectors: 77/281
+Training complete. Support vectors: 60/280
+  C=100.0000, gamma=0.0010, degree=3  -> CV accuracy: 0.5642
 Training complete. Support vectors: 54/281
 Training complete. Support vectors: 48/281
 Training complete. Support vectors: 64/281
-Training complete. Support vectors: 61/281
-Training complete. Support vectors: 48/280
-  C=100.0000, gamma=0.0010, degree=4  -> CV accuracy: 0.5242
+Training complete. Support vectors: 73/281
+Training complete. Support vectors: 50/280
+  C=100.0000, gamma=0.0010, degree=4  -> CV accuracy: 0.4703
 Training complete. Support vectors: 40/281
 Training complete. Support vectors: 59/281
 Training complete. Support vectors: 82/281
@@ -1187,17 +1187,17 @@ Training complete. Support vectors: 44/281
 Training complete. Support vectors: 62/281
 Training complete. Support vectors: 40/280
   C=100.0000, gamma=0.1000, degree=2  -> CV accuracy: 0.6357
-Training complete. Support vectors: 50/281
+Training complete. Support vectors: 30/281
 Training complete. Support vectors: 59/281
 Training complete. Support vectors: 61/281
-Training complete. Support vectors: 41/281
-Training complete. Support vectors: 68/280
-  C=100.0000, gamma=0.1000, degree=3  -> CV accuracy: 0.7577
+Training complete. Support vectors: 39/281
+Training complete. Support vectors: 80/280
+  C=100.0000, gamma=0.1000, degree=3  -> CV accuracy: 0.7407
 Training complete. Support vectors: 25/281
 Training complete. Support vectors: 56/281
 Training complete. Support vectors: 40/281
 Training complete. Support vectors: 45/281
-Training complete. Support vectors: 38/280
+Training complete. Support vectors: 37/280
   C=100.0000, gamma=0.1000, degree=4  -> CV accuracy: 0.5331
 Training complete. Support vectors: 46/281
 Training complete. Support vectors: 42/281
@@ -1206,11 +1206,11 @@ Training complete. Support vectors: 56/281
 Training complete. Support vectors: 44/280
   C=100.0000, gamma=1.0000, degree=2  -> CV accuracy: 0.6729
 Training complete. Support vectors: 3/281
-Training complete. Support vectors: 5/281
-Training complete. Support vectors: 9/281
-Training complete. Support vectors: 10/281
-Training complete. Support vectors: 9/280
-  C=100.0000, gamma=1.0000, degree=3  -> CV accuracy: 0.4532
+Training complete. Support vectors: 6/281
+Training complete. Support vectors: 19/281
+Training complete. Support vectors: 12/281
+Training complete. Support vectors: 11/280
+  C=100.0000, gamma=1.0000, degree=3  -> CV accuracy: 0.4588
 Training complete. Support vectors: 3/281
 Training complete. Support vectors: 2/281
 Training complete. Support vectors: 2/281
@@ -1304,17 +1304,17 @@ Confusion Matrix (+1=Forged, -1=Genuine):
   Actual -1            7           146
 
 --- Polynomial Kernel ---
-Training complete. Support vectors: 19/1098
+Training complete. Support vectors: 23/1098
 
 === Evaluation Results ===
-Accuracy:  0.6350
+Accuracy:  0.9234
 Precision: 1.0000
-Recall:    0.1736
-F1 Score:  0.2958
+Recall:    0.8264
+F1 Score:  0.9050
 
 Confusion Matrix (+1=Forged, -1=Genuine):
                 Predicted +1   Predicted -1
-  Actual +1           21           100
+  Actual +1          100            21
   Actual -1            0           153
 
 === Grid Search (Linear) ===
@@ -1664,8 +1664,8 @@ Training complete. Support vectors: 22/1098
 Training complete. Support vectors: 27/1098
 Training complete. Support vectors: 28/1098
 Training complete. Support vectors: 22/1098
-Training complete. Support vectors: 19/1096
-  C=1.0000, gamma=0.1000, degree=3  -> CV accuracy: 0.8932
+Training complete. Support vectors: 23/1096
+  C=1.0000, gamma=0.1000, degree=3  -> CV accuracy: 0.9505
 Training complete. Support vectors: 36/1098
 Training complete. Support vectors: 14/1098
 Training complete. Support vectors: 22/1098
@@ -1835,21 +1835,21 @@ Training complete. Support vectors: 4/1098
 Training complete. Support vectors: 4/1096
   C=100.0000, gamma=1.0000, degree=4  -> CV accuracy: 0.7317
 
-  Best: C=1.0000, gamma=0.1000, degree=2 -> CV accuracy: 0.9402
+  Best: C=1.0000, gamma=0.1000, degree=3 -> CV accuracy: 0.9505
 
 --- Polynomial (Optimised) ---
-Training complete. Support vectors: 21/1098
+Training complete. Support vectors: 23/1098
 
 === Evaluation Results ===
-Accuracy:  0.9416
-Precision: 0.9646
-Recall:    0.9008
-F1 Score:  0.9316
+Accuracy:  0.9234
+Precision: 1.0000
+Recall:    0.8264
+F1 Score:  0.9050
 
 Confusion Matrix (+1=Forged, -1=Genuine):
                 Predicted +1   Predicted -1
-  Actual +1          109            12
-  Actual -1            4           149
+  Actual +1          100            21
+  Actual -1            0           153
 
 
 ================================================================
@@ -1878,8 +1878,8 @@ Confusion Matrix (+1=Spam, -1=Ham):
   Actual -1          204           347
 
 --- 5-Fold Cross-Validation (RBF) ---
-Training complete. Support vectors: 226/3681
-  Fold 1/5: accuracy = 0.7609
+Training complete. Support vectors: 172/3681
+  Fold 1/5: accuracy = 0.6663
 Training complete. Support vectors: 160/3681
   Fold 2/5: accuracy = 0.7228
 Training complete. Support vectors: 160/3681
@@ -1888,7 +1888,7 @@ Training complete. Support vectors: 110/3681
   Fold 4/5: accuracy = 0.6478
 Training complete. Support vectors: 160/3680
   Fold 5/5: accuracy = 0.7590
-Mean CV Accuracy: 0.7235
+Mean CV Accuracy: 0.7046
 
 === Kernel Comparison (Default Params) ===
 

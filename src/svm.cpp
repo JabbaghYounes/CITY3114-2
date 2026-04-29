@@ -80,6 +80,7 @@ void SVM::train(const std::vector<std::vector<double>>& X, const std::vector<int
                 alphas_[i] += y[i] * y[j] * (alpha_j_old - alphas_[j]);
 
                 // Update bias
+                double b_old = b_;
                 double b1 = b_ - E[i]
                     - y[i] * (alphas_[i] - alpha_i_old) * K[i][i]
                     - y[j] * (alphas_[j] - alpha_j_old) * K[i][j];
@@ -96,14 +97,13 @@ void SVM::train(const std::vector<std::vector<double>>& X, const std::vector<int
                     b_ = (b1 + b2) / 2.0;
                 }
 
-                // Recompute error cache
+                // Incremental error cache update — O(n) instead of O(n²) rebuild.
+                // ΔE[k] = δα_i·y_i·K[i][k] + δα_j·y_j·K[j][k] + δb
+                double da_i_y = (alphas_[i] - alpha_i_old) * y[i];
+                double da_j_y = (alphas_[j] - alpha_j_old) * y[j];
+                double db = b_ - b_old;
                 for (int k = 0; k < n; ++k) {
-                    double f_k = 0.0;
-                    for (int m = 0; m < n; ++m) {
-                        f_k += alphas_[m] * y[m] * K[m][k];
-                    }
-                    f_k += b_;
-                    E[k] = f_k - y[k];
+                    E[k] += da_i_y * K[i][k] + da_j_y * K[j][k] + db;
                 }
 
                 ++num_changed;

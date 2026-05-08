@@ -98,7 +98,7 @@ See the [`docs/`](docs/) folder for detailed documentation:
 - [Algorithm](docs/algorithm.md) — SVM dual formulation, SMO training, kernel functions
 - [Usage](docs/usage.md) — build, run, and output walk-through
 
-The full assignment report is in [`resources/assignment-report.md`](resources/assignment-report.md).
+The full assignment report is kept locally under `resources/` (not tracked in this repository).
 
 ## License
 

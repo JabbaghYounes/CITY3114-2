@@ -58,7 +58,7 @@ This reads `resources/run_output.txt`, splits it by `=== DATASET:` markers, and 
 
 The figures committed in [`figures/`](figures/) are the most recent output of the pipeline. Click a dataset to expand its plots.
 
-<details>
+<details open>
 <summary><strong>Ionosphere</strong> — 351 samples, 34 features (full grid search)</summary>
 
 ![Confusion matrices](figures/ionosphere_confusion_matrices.png)

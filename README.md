@@ -52,18 +52,7 @@ After running the classifier, generate publication-quality plots from the output
 python3 scripts/plot_results.py
 ```
 
-This reads `resources/run_output.txt`, splits it by `=== DATASET:` markers, and saves a per-dataset set of figures to `figures/` with the dataset slug as filename prefix:
-
-| Pattern | Contents |
-|---|---|
-| `<slug>_confusion_matrices.png` | 2×2 heatmaps for initial RBF and the three optimised kernels |
-| `<slug>_cv_folds.png` | 5-fold cross-validation accuracy bar chart with mean line |
-| `<slug>_kernel_comparison_default.png` | Grouped bars: accuracy, precision, recall, F1 per kernel (default params) |
-| `<slug>_kernel_comparison_optimised.png` | Same layout for optimised parameters |
-| `<slug>_grid_search_heatmaps.png` | C × γ heatmaps per kernel (Polynomial split by degree) |
-| `<slug>_default_vs_optimised.png` | Side-by-side accuracy comparison showing tuning impact |
-
-Datasets that skip grid search (currently Spambase) only get `cv_folds` and `kernel_comparison_default`. Ionosphere and Banknote each get the full set of six. Requires Python 3 with `matplotlib` and `numpy`.
+This reads `resources/run_output.txt`, splits it by `=== DATASET:` markers, and saves a per-dataset set of figures to `figures/` with the dataset slug as filename prefix. Ionosphere and Banknote each get the full set of six; Spambase (grid search disabled) only gets `cv_folds` and `kernel_comparison_default`. Requires Python 3 with `matplotlib` and `numpy`. See [`docs/usage.md`](docs/usage.md#generate-figures) for the full filename-pattern table.
 
 ## Results
 

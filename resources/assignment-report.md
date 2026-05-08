@@ -15,7 +15,7 @@ This project implements a binary Support Vector Machine (SVM) classifier from sc
 
 The motivation for evaluating across *several* datasets rather than one is more pointed. Task 2 asks the algorithm to be discussed in terms of its "ability to solve various problems" and the limitations it carries; the most direct way to answer that is to actually run the same algorithm across several problems and let the cross-dataset behaviour speak for itself. The three datasets were chosen for diversity along three axes — sample count, feature count, and domain — so that any pattern that persists across them is more credibly an algorithmic property than a single-dataset accident.
 
-The classifier uses the **Sequential Minimal Optimization (SMO)** algorithm for training, originally introduced by John Platt at Microsoft Research (Platt, 1998). SMO is the most widely used method for solving the SVM dual problem because it decomposes the global quadratic program into a sequence of analytically solvable two-variable sub-problems, which means no general-purpose QP solver is required. The implementation also applies an **incremental error-cache update** on every successful pair update — a closed-form delta rather than a full O(n²) rebuild — which cuts the per-update cost by roughly a factor of `n` and lets the full three-dataset run finish in around 90 seconds.
+The classifier uses the **Sequential Minimal Optimization (SMO)** algorithm for training, originally introduced by John Platt at Microsoft Research (Platt, 1998). SMO is the most widely used method for solving the SVM dual problem because it decomposes the global quadratic program into a sequence of analytically solvable two-variable sub-problems, which means no general-purpose QP solver is required. The same algorithm — with additional refinements — is the basis of widely deployed implementations such as `libsvm` and the `SVC` class in scikit-learn (Scikit-learn developers). The implementation also applies an **incremental error-cache update** on every successful pair update — a closed-form delta rather than a full O(n²) rebuild — which cuts the per-update cost by roughly a factor of `n` and lets the full three-dataset run finish in around 90 seconds.
 
 The program is built around a small, modular set of components, each in its own translation unit:
 
@@ -48,7 +48,7 @@ curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/00267/data_b
 curl -sL "https://archive.ics.uci.edu/ml/machine-learning-databases/spambase/spambase.data"                -o data/spambase.data
 ```
 
-A complete run takes about 90 seconds on a typical desktop CPU and prints, per dataset, the baseline RBF results, the 5-fold cross-validation accuracy, the three-kernel comparison, the full grid-search trace (where applicable), and the final results table for the optimised models. A companion Python script (`scripts/plot_results.py`) parses the program's stdout, splits it on `=== DATASET:` markers, and generates publication-quality figures per dataset — confusion matrix heatmaps, kernel comparison bar charts, grid-search heatmaps, and a cross-validation fold chart — into a `figures/` directory, with each filename prefixed by a dataset slug (e.g. `figures/ionosphere_grid_search_heatmaps.png`).
+A complete run takes about 90 seconds on a typical desktop CPU and prints, per dataset, the baseline RBF results, the 5-fold cross-validation accuracy, the three-kernel comparison, the full grid-search trace (where applicable), and the final results table for the optimised models. A companion Python script (`scripts/plot_results.py`) parses the program's stdout, splits it on `=== DATASET:` markers, and generates publication-quality figures per dataset — confusion matrix heatmaps, kernel comparison bar charts, grid-search heatmaps, and a cross-validation fold chart — into a `figures/` directory, with each filename prefixed by a dataset slug (e.g. `figures/ionosphere_grid_search_heatmaps.png`). The plotting script requires Python 3 with `matplotlib` and `numpy`; these are only needed to regenerate figures, not to build or run the C++ classifier itself.
 
 ### 1.2 Datasets
 
@@ -96,7 +96,7 @@ Feature normalisation is **essential** for SVMs that use distance-based kernels 
 
 #### Geometric Intuition
 
-A Support Vector Machine is a supervised learning algorithm that finds the optimal separating hyperplane between two classes (Cortes & Vapnik, 1995). In the linearly separable case the "optimal" hyperplane is the one that maximises the **margin** — the perpendicular distance between the boundary and the nearest data points from each class. Those nearest points are called **support vectors**, and they are the only training examples that influence the position of the boundary; moving any other example a small distance has no effect on the model.
+A Support Vector Machine is a supervised learning algorithm that finds the optimal separating hyperplane between two classes (Cortes & Vapnik, 1995; Burges, 1998). In the linearly separable case the "optimal" hyperplane is the one that maximises the **margin** — the perpendicular distance between the boundary and the nearest data points from each class. Those nearest points are called **support vectors**, and they are the only training examples that influence the position of the boundary; moving any other example a small distance has no effect on the model.
 
 This margin-maximisation objective is what gives SVMs their well-known generalisation properties. Intuitively, a wider margin gives the classifier more "room for error" when it sees noisy or slightly shifted test data, and PAC learning theory formalises this with bounds on test error that depend on the margin width rather than on the dimensionality of the input space. In practice, SVMs often generalise well even when the number of features is comparable to the number of samples — the regime of two of the three datasets used here (Ionosphere has 34 features for 351 samples; Banknote has 4 features for 1,372).
 
@@ -228,9 +228,17 @@ The deterministic seed is important for reproducibility: every result in this re
 
 #### Why Cross-Validation
 
-Selecting hyperparameters by their performance on a single train/test split would be unreliable: a particular split might happen to favour one combination over another simply due to which samples ended up in the test set. **k-fold cross-validation** addresses this by partitioning the (full, normalised) dataset into `k` equally sized folds, training on `k − 1` of them, evaluating on the held-out fold, and rotating through all `k` choices of held-out fold. The reported metric is the mean accuracy across the `k` runs. Five folds was chosen as a standard compromise: it gives reasonably stable estimates without making the grid search unaffordably slow. The per-fold accuracy spread for each dataset is visualised in `figures/<slug>_cv_folds.png`.
+Selecting hyperparameters by their performance on a single train/test split would be unreliable: a particular split might happen to favour one combination over another simply due to which samples ended up in the test set. **k-fold cross-validation** addresses this by partitioning the (full, normalised) dataset into `k` equally sized folds, training on `k − 1` of them, evaluating on the held-out fold, and rotating through all `k` choices of held-out fold. The reported metric is the mean accuracy across the `k` runs. Five folds was chosen as a standard compromise: it gives reasonably stable estimates without making the grid search unaffordably slow.
 
 It is worth noting that the cross-validation here uses **the full dataset, not just the training split**. This is the conventional approach for hyperparameter selection — the test split is only used at the very end, to give an unbiased estimate of generalisation for the final tuned model.
+
+The per-fold accuracy spread for each dataset is shown below.
+
+![Ionosphere — 5-fold cross-validation per-fold accuracy with mean line](../figures/ionosphere_cv_folds.png)
+
+![Banknote — 5-fold cross-validation per-fold accuracy with mean line](../figures/banknote_cv_folds.png)
+
+![Spambase — 5-fold cross-validation per-fold accuracy with mean line](../figures/spambase_cv_folds.png)
 
 #### Baseline 5-Fold CV (Default RBF)
 
@@ -265,13 +273,25 @@ The grid search identified the following best configurations by 5-fold CV accura
 | Banknote | RBF | 10 | 1 | — | 98.69% |
 | Banknote | Polynomial | 1 | 0.1 | 3 | 95.05% |
 
-The grid search landscape is visualised as C-versus-γ heatmaps in `figures/<slug>_grid_search_heatmaps.png`, with the best cell highlighted for each kernel. A practical observation from the grid search trace is that the best `(C, γ)` combinations differ markedly between datasets: Banknote's RBF prefers a tight, high-`γ` boundary (`γ = 1`), Ionosphere's RBF prefers a moderate `γ = 0.1`, and the Linear kernel prefers `C = 1` for both. The grid search therefore behaves as a useful diagnostic tool — its output carries information about each dataset's structure, not just a tuned classifier.
+The grid search landscape is shown below as C-versus-γ heatmaps, with the best cell highlighted for each kernel.
+
+![Ionosphere — grid search C×γ accuracy heatmaps per kernel](../figures/ionosphere_grid_search_heatmaps.png)
+
+![Banknote — grid search C×γ accuracy heatmaps per kernel](../figures/banknote_grid_search_heatmaps.png)
+
+A practical observation from the grid search trace is that the best `(C, γ)` combinations differ markedly between datasets: Banknote's RBF prefers a tight, high-`γ` boundary (`γ = 1`), Ionosphere's RBF prefers a moderate `γ = 0.1`, and the Linear kernel prefers `C = 1` for both. The grid search therefore behaves as a useful diagnostic tool — its output carries information about each dataset's structure, not just a tuned classifier.
 
 ### 1.5 Results
 
 #### Default Parameters (`C = 1.0`, `γ = 0.1`)
 
-The first comparison is between the three kernels with the same default hyperparameters across all three datasets. This is intentionally not a competitive setting — the point is to establish a baseline against which the §1.4 grid search can be judged. See `figures/<slug>_kernel_comparison_default.png` for the per-dataset visual comparison.
+The first comparison is between the three kernels with the same default hyperparameters across all three datasets. This is intentionally not a competitive setting — the point is to establish a baseline against which the §1.4 grid search can be judged.
+
+![Ionosphere — kernel comparison at default hyperparameters (accuracy / precision / recall / F1)](../figures/ionosphere_kernel_comparison_default.png)
+
+![Banknote — kernel comparison at default hyperparameters](../figures/banknote_kernel_comparison_default.png)
+
+![Spambase — kernel comparison at default hyperparameters](../figures/spambase_kernel_comparison_default.png)
 
 | Dataset | Kernel | Accuracy | Precision | Recall | F1 |
 |---|---|---|---|---|---|
@@ -313,7 +333,15 @@ After tuning, every dataset where grid search ran reaches the high-90s in accura
 
 - **Linear is identical in default and optimised** for both Ionosphere and Banknote. The grid winner for Linear was `C = 1` on both — i.e. the default. This explains why "Linear (Optimised)" rows above match "Linear (Default)" rows in the previous table exactly.
 
-The optimised-parameter visual comparison is in `figures/<slug>_kernel_comparison_optimised.png`, and the side-by-side default-vs-optimised accuracy chart is in `figures/<slug>_default_vs_optimised.png`.
+The optimised-parameter visual comparison and the side-by-side default-vs-optimised accuracy chart for each dataset where grid search ran are shown below.
+
+![Ionosphere — kernel comparison at optimised hyperparameters](../figures/ionosphere_kernel_comparison_optimised.png)
+
+![Banknote — kernel comparison at optimised hyperparameters](../figures/banknote_kernel_comparison_optimised.png)
+
+![Ionosphere — default vs optimised accuracy per kernel](../figures/ionosphere_default_vs_optimised.png)
+
+![Banknote — default vs optimised accuracy per kernel](../figures/banknote_default_vs_optimised.png)
 
 #### Per-Dataset Discussion
 
@@ -352,7 +380,11 @@ Perfect recall on the positive class — every "good" radar return in the test s
 
 Recall of 0.95 (most spam is caught) but precision of only 0.63 (a third of "spam" predictions are actually ham). For real spam filtering the cost asymmetry runs the *other* way — false positives (legitimate email lost to the spam folder) are more costly than false negatives — so this profile is not production-quality. A tuned model would shift precision up at the cost of some recall, but Spambase's grid search is disabled here for the runtime reasons in §2.2.
 
-Confusion matrices for all four models per dataset (initial RBF baseline plus the three optimised kernels, where applicable) are visualised in `figures/<slug>_confusion_matrices.png`.
+Confusion matrices for the initial RBF baseline alongside the three optimised kernels (Ionosphere and Banknote only — Spambase has no optimised models) are shown below.
+
+![Ionosphere — confusion matrices for initial RBF and the three optimised kernels](../figures/ionosphere_confusion_matrices.png)
+
+![Banknote — confusion matrices for initial RBF and the three optimised kernels](../figures/banknote_confusion_matrices.png)
 
 ---
 
@@ -400,7 +432,7 @@ Despite their strengths, SVMs have a number of practical limitations that the Ta
 
 Despite the limitations above, SVMs remain a practical and widely used algorithm in domains where their strengths line up with the problem structure. Several application areas are worth highlighting:
 
-**Text classification and natural language processing.** SVMs were the dominant algorithm for text classification before the rise of deep learning, and they remain competitive on small-corpus problems. Spam detection (the application Spambase models), sentiment analysis, language identification, and document categorisation are all classical SVM applications. Text data is naturally represented as high-dimensional sparse vectors (bag-of-words, TF-IDF), and Linear SVMs handle this representation extremely efficiently — sparse kernel evaluation is fast, and the resulting models are compact. For many production text-classification systems with limited training data, a Linear SVM trained with `liblinear` or similar is still the right starting point, simply because it works and is easy to deploy. Spambase's behaviour in §1.5 underlines both the appeal and the limitations: an untuned RBF reaches 76% accuracy from scratch, but Linear (51%) and high-degree Polynomial (40%) kernels collapse, which is why the established practice is to use a Linear SVM with proper hyperparameter tuning rather than a default RBF.
+**Text classification and natural language processing.** SVMs were the dominant algorithm for text classification before the rise of deep learning (Joachims, 1998), and they remain competitive on small-corpus problems. Spam detection (the application Spambase models), sentiment analysis, language identification, and document categorisation are all classical SVM applications. Text data is naturally represented as high-dimensional sparse vectors (bag-of-words, TF-IDF), and Linear SVMs handle this representation extremely efficiently — sparse kernel evaluation is fast, and the resulting models are compact. For many production text-classification systems with limited training data, a Linear SVM trained with `liblinear` or similar is still the right starting point, simply because it works and is easy to deploy. Spambase's behaviour in §1.5 underlines both the appeal and the limitations: an untuned RBF reaches 76% accuracy from scratch, but Linear (51%) and high-degree Polynomial (40%) kernels collapse, which is why the established practice is to use a Linear SVM with proper hyperparameter tuning rather than a default RBF.
 
 **Image and signal recognition.** SVMs were the workhorse of computer vision throughout the 2000s, often combined with hand-crafted feature descriptors like SIFT, HOG, or SURF. The pedestrian detector in early autonomous driving systems used HOG features fed into a Linear SVM. Handwritten digit recognition (MNIST and the postal-code reading systems that motivated much of the SVM literature) was an SVM application long before convolutional neural networks took over. The Banknote Authentication dataset used in this study is an example of the same pattern in miniature: hand-crafted wavelet features (variance, skewness, kurtosis, entropy) fed into an SVM, with the optimised RBF reaching 96.72% accuracy and 36 support vectors out of 1,098 training samples. Even today, SVMs are used for signal-classification tasks like the Ionosphere problem in §1.5 — small training sets, high feature counts, embedded-device deployment, and applications where model size and inference latency are tightly constrained.
 

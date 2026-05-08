@@ -65,6 +65,42 @@ This reads `resources/run_output.txt`, splits it by `=== DATASET:` markers, and 
 
 Datasets that skip grid search (currently Spambase) only get `cv_folds` and `kernel_comparison_default`. Ionosphere and Banknote each get the full set of six. Requires Python 3 with `matplotlib` and `numpy`.
 
+## Results
+
+The figures committed in [`figures/`](figures/) are the most recent output of the pipeline. Click a dataset to expand its plots.
+
+<details>
+<summary><strong>Ionosphere</strong> — 351 samples, 34 features (full grid search)</summary>
+
+![Confusion matrices](figures/ionosphere_confusion_matrices.png)
+![5-fold CV accuracy](figures/ionosphere_cv_folds.png)
+![Kernel comparison (default params)](figures/ionosphere_kernel_comparison_default.png)
+![Kernel comparison (optimised params)](figures/ionosphere_kernel_comparison_optimised.png)
+![Grid search heatmaps](figures/ionosphere_grid_search_heatmaps.png)
+![Default vs optimised](figures/ionosphere_default_vs_optimised.png)
+
+</details>
+
+<details>
+<summary><strong>Banknote Authentication</strong> — 1372 samples, 4 features (full grid search)</summary>
+
+![Confusion matrices](figures/banknote_confusion_matrices.png)
+![5-fold CV accuracy](figures/banknote_cv_folds.png)
+![Kernel comparison (default params)](figures/banknote_kernel_comparison_default.png)
+![Kernel comparison (optimised params)](figures/banknote_kernel_comparison_optimised.png)
+![Grid search heatmaps](figures/banknote_grid_search_heatmaps.png)
+![Default vs optimised](figures/banknote_default_vs_optimised.png)
+
+</details>
+
+<details>
+<summary><strong>Spambase</strong> — 4601 samples, 57 features (grid search disabled)</summary>
+
+![5-fold CV accuracy](figures/spambase_cv_folds.png)
+![Kernel comparison (default params)](figures/spambase_kernel_comparison_default.png)
+
+</details>
+
 ## Documentation
 
 See the [`docs/`](docs/) folder for detailed documentation:
